@@ -1,0 +1,26 @@
+{
+	"name": "Search GEAR",
+	"description": "Search google with enhanced auto-loading results",
+	"version": "1.5",
+	"permissions": [
+		"contextMenus",
+        "tabs",
+        "http://*/*", 
+		"https://*/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [ "*://*.google.com/search?q=*" ],
+            "js": [   "content.js"]
+        }
+    ],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+
+	"icons": {
+		"64": "gear.png"
+	},
+	"manifest_version": 2
+}
