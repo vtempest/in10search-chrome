@@ -3,14 +3,12 @@
 	"description": "Search google with enhanced auto-loading results",
 	"version": "1.5",
 	"permissions": [
-		"contextMenus",
-        "tabs",
         "http://*/*", 
 		"https://*/*"
     ],
     "content_scripts": [
         {
-            "matches": [ "*://*.google.com/search?q=*" ],
+            "matches": [ "*://*.google.com/search?*q=*" ],
             "js": [   "content.js"]
         }
     ],
