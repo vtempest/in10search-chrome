@@ -182,8 +182,7 @@ function doMouseOver(g){
 
                             document.querySelector('#rez .show').addEventListener('load', function() {
 
-                              //console.log(  "Load Time " + (new Date().getTime() - (window.loadTime||0)) + "ms: "+ this.src );
-
+                           
                               try{
 
                                 var rez = document.querySelector("#rez");
@@ -264,8 +263,10 @@ function doMouseOver(g){
 
     
 
-//first on laod
- rs[0].dispatchEvent(new Event('mouseover'));
+//first on load 
+
+
+document.querySelectorAll(".g")[0].dispatchEvent(new Event('mouseover', {'bubbles': true} ));
 
 
 
@@ -276,15 +277,22 @@ function keyDownHandler(e) {
   var key = e.keyCode;
   var cur = document.querySelector(".current");
 
-      var rez = document.querySelector("#rez"); 
+
+  //get index of current
+  var gs = document.querySelectorAll(".g");
+
+  for (i=0;g=gs[++i];)
+    if (g==cur)    
+      break;
+
 
   //next
   if ([39,74].indexOf(key)>-1) 
-      cur.nextSibling.dispatchEvent(new Event('mouseover'));
+      gs[i+1].dispatchEvent(new Event('mouseover', {'bubbles': true}));
 
 
   if ([37,75].indexOf(key)>-1) 
-    cur.previousSibling.dispatchEvent(new Event('mouseover'));
+    gs[i-1].dispatchEvent(new Event('mouseover', {'bubbles': true}));
 
   
   cur.scrollIntoViewIfNeeded();
@@ -301,19 +309,7 @@ function keyDownHandler(e) {
   }
 
 
-//  .dispatchEvent(new Event('mouseover'));
 
 }
 
 } // end init()
-
-
-setInterval(function(){
-//window.find(aStringToFind, bCaseSensitive, bBackwards, bWrapAround, bWholeWord, bSearchInFrames, bShowDialog);
-
-//document.querySelector("#rez .show").contentWindow.find("Google" ,0,0,0,0,0,1);
-
-//window.find("Google" ,0,0,0,0,1,1);
-
-
-},3000)
