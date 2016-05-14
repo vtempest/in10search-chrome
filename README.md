@@ -8,3 +8,4 @@ Install:
 git clone https://github.com/gulakov/search-gear-chrome
 
 Go to chrome://extensions, Check Developer Mode, then Load unpacked extension, point to this folder, then search google 
+

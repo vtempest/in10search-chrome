@@ -3,13 +3,14 @@
 	"description": "Search google with enhanced auto-loading results",
 	"version": "1.5",
 	"permissions": [
-        "http://*/*", 
-		"https://*/*"
+        "*://*.google.com/search?*q=*"
     ],
     "content_scripts": [
         {
             "matches": [ "*://*.google.com/search?*q=*" ],
-            "js": [   "content.js"]
+            "js": ["gear-autoload.js", "gear-infinitescroll.js"],
+            "css": ["gear-ui.css"]
+
         }
     ],
     "background": {
@@ -18,7 +19,7 @@
     },
 
 	"icons": {
-		"64": "gear.png"
+		"64": "icon.png"
 	},
 	"manifest_version": 2
 }
