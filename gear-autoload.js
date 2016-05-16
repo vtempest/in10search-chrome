@@ -1,114 +1,114 @@
 (function() { //iife
 
-    //util$
-    function $(s) {
-        var e = document.querySelectorAll(s);
-        return e.length == 1 ? e[0] : e; };
+//util$
+function $(s) {
+    var e = document.querySelectorAll(s);
+    return e.length == 1 ? e[0] : e; };
 
 
-    //only on specific pages of web results
-    if (["All", "Videos", "News", "Shopping", "News", "Books"].indexOf($(".hdtb-msel").textContent) == -1)
-        return;
+//only on specific pages of web results
+if (["All", "Videos", "News", "Shopping", "News", "Books"].indexOf($(".hdtb-msel").textContent) == -1)
+    return;
 
 
 
-    //force http to avoid mixed content CSP block of http iframes on https google
-    if (location.protocol == "https:") {
-        location.href = location.href.replace("https", "http") + "&gws_rd=ssl";
-        return;
-    }
+//force http to avoid mixed content CSP block of http iframes on https google
+if (location.protocol == "https:") {
+    location.href = location.href.replace("https", "http") + "&gws_rd=ssl";
+    return;
+}
 
 
-    //#rez container for iframes, and takes up half the page fixed position
-    var rez = document.createElement('div');
-    rez.id = 'rez';
-    document.body.appendChild(rez);
+//#rez container for iframes, and takes up half the page fixed position
+var rez = document.createElement('div');
+rez.id = 'rez';
+document.body.appendChild(rez);
 
-    function positionRez() {
-        var rezWidth = (document.documentElement.clientWidth - $(".g")[0].clientWidth)
-        var rezTop = Math.max(0, $(".sfbg.nojsv").getBoundingClientRect().bottom + 1);
+function positionRez() {
+    var rezWidth = (document.documentElement.clientWidth - $(".g")[0].clientWidth)
+    var rezTop = Math.max(0, $(".sfbg.nojsv").getBoundingClientRect().bottom + 1);
 
-        if (!$("#rez").style) return;
+    if (!$("#rez").style) return;
 
-        $("#rez").style.width = rezWidth + "px";
-        $("#rez").style.top = rezTop + "px";
+    $("#rez").style.width = rezWidth + "px";
+    $("#rez").style.top = rezTop + "px";
 
-        // during scrolling, make the intentional lag of mouse hover slightly longer
-        window.longDelayHover = true;
+    // during scrolling, make the intentional lag of mouse hover slightly longer
+    window.longDelayHover = true;
 
-    };
-
-
-    window.addEventListener("resize", positionRez, 1)
-    window.addEventListener("scroll", positionRez, 1)
-    positionRez()
+};
 
 
-    //listen to mouse over on container of .g then detect if on .g, 
-    //to avoid having to bind listeners to new .g when those get added
-
-    $("#ires").addEventListener("mouseover", function(e) {
-
-        //if no-hover mode
-        if (window.enableHoverMode && !window.enableHoverMode.checked) return;
-
-        for (var i in e.path)
-            if (e.path[i].className == "g") {
-                doMouseOver(e.path[i]);
-
-                break;
-            }
-
-    }, 0)
-
-    $("#ires").addEventListener("click", function(e) {
-        for (var i in e.path)
-            if (e.path[i].className == "g") {
-                doMouseOver(e.path[i]);
-
-                break;
-            }
-    }, 0)
-
-    $("#ires").addEventListener("mouseout", function(e) {
-
-        for (var i in e.path)
-            if (e.path[i].className == "g") {
-                doMouseOut();
-
-                break;
-            }
-    }, 0)
-
-    //clear intent-to-load timer if user leaves mouse from g in <300ms
-    function doMouseOut(g) {
-        window.clearTimeout(window.loadPageAfterDelayTimeout);
-    }
+window.addEventListener("resize", positionRez, 1)
+window.addEventListener("scroll", positionRez, 1)
+positionRez()
 
 
-    function doMouseOver(g) {
+//listen to mouse over on container of .g then detect if on .g, 
+//to avoid having to bind listeners to new .g when those get added
 
-        //clear prior intent-to-load  timers
-        window.clearTimeout(window.loadPageAfterDelayTimeout);
+$("#ires").addEventListener("mouseover", function(e) {
+
+    //if no-hover mode
+    if (window.enableHoverMode && !window.enableHoverMode.checked) return;
+
+    for (var i in e.path)
+        if (e.path[i].className == "g") {
+            doMouseOver(e.path[i]);
+
+            break;
+        }
+
+}, 0)
+
+$("#ires").addEventListener("click", function(e) {
+    for (var i in e.path)
+        if (e.path[i].className == "g") {
+            doMouseOver(e.path[i]);
+
+            break;
+        }
+}, 0)
+
+$("#ires").addEventListener("mouseout", function(e) {
+
+    for (var i in e.path)
+        if (e.path[i].className == "g") {
+            doMouseOut();
+
+            break;
+        }
+}, 0)
+
+//clear intent-to-load timer if user leaves mouse from g in <300ms
+function doMouseOut(g) {
+    window.clearTimeout(window.loadPageAfterDelayTimeout);
+}
 
 
-        //start transition to demonstrate "intent to action"
-        // g.className += " current"
+function doMouseOver(g) {
+
+    //clear prior intent-to-load  timers
+    window.clearTimeout(window.loadPageAfterDelayTimeout);
 
 
-        //set a intent-to-load page in 300ms timer, to avoid trigger from fast mouse swipes across whole screen
-        window.loadPageAfterDelayTimeout = setTimeout(function() {
-
-                //clear flag to delay mouseover intent longer, set when scrolling
-                window.longDelayHover = false;
+    //start transition to demonstrate "intent to action"
+    // g.className += " current"
 
 
-                //hide prior rFrames
-                document.querySelectorAll('.current').forEach(function(cur) {
-                    if (g != cur)
-                        cur.className = 'g';
-                })
-                if (rez.querySelector('.show'))
+    //set a intent-to-load page in 300ms timer, to avoid trigger from fast mouse swipes across whole screen
+    window.loadPageAfterDelayTimeout = setTimeout(function() {
+
+            //clear flag to delay mouseover intent longer, set when scrolling
+            window.longDelayHover = false;
+
+
+            //hide prior rFrames
+            document.querySelectorAll('.current').forEach(function(cur) {
+                if (g != cur)
+                    cur.className = 'g';
+            })
+            if (rez.querySelector('.show'))
                     rez.querySelector('.show').className = '';
 
 
