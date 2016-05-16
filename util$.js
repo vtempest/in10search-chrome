@@ -20,7 +20,7 @@ $.prototype.each = function(fn){
 
   console.log(this); //list of matched elems
 
-  for (var i=0;el=this[i];i++)    
+  for (i=0;el=this[i++];)    
     fn.call(this) 
 
 }

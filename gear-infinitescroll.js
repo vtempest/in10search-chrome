@@ -1,29 +1,22 @@
+var nextPages = {urls: [], loadedLastTime: Date.now(), loadedLastIndex: 0, }
 
-
-
-
-  var nextPages = {urls: [], loadedLastTime: Date.now(), loadedLastIndex: 0, }
-  var nextPages 
-
-  for (var i=0;p=document.querySelectorAll("#navcnt .fl")[i];i++)  
-      nextPages.urls.push(p.href)
-
-  
-
-   console.log(nextPages)
-
+//urls of google results first 10 pages
+for (var i=0;p=document.querySelectorAll("#navcnt .fl")[i];i++)  
+    nextPages.urls.push(p.href)
 
 
 
 function ininiteScroll(){
-    // detect scroll if at bottom 50px of page
-    if ((window.innerHeight + window.scrollY) + 50 >= document.body.offsetHeight) {
 
+
+    // detect scroll if at bottom 50px of page
+    if (window.innerHeight + window.scrollY + 50 >= document.body.offsetHeight) {
 
 
     	//rate limit! 5s to avoid Google CAPTCHA on detection of anti-scrapping scripts   
         if ( Date.now() - nextPages.loadedLastTime > 5000 ) {
-              nextPages.loadedLastTime = Date.now();
+
+             nextPages.loadedLastTime = Date.now();
 
          
               var xhr = new XMLHttpRequest();
@@ -42,11 +35,25 @@ function ininiteScroll(){
               xhr.send();
 
 
-          } 
+          } else { //if under 5s rate limit, show loading cursor
+
+            $("html").style.cursor = "wait";
+
+            //console.log(5000 + nextPages.loadedLastTime - Date.now() )
+
+            setTimeout(function(){
+               //reset cursor, meant to indicate intentional lag of 5s rate limiter
+              $("html").style.cursor = "default";
+              ininiteScroll();
+            }, 5000 + nextPages.loadedLastTime - Date.now() );
+
+
+          }
 
 
 
     }
+
 
 
 

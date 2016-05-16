@@ -1,7 +1,9 @@
+//util$
+function $(s){ e=document.querySelectorAll(s); return e.length==1? e[0] : e; };
 
 
-//only on web results
-if (["All","Videos","News","Shopping","News","Books"].indexOf(document.querySelector(".hdtb-msel").textContent)>-1)
+//only on specific pages of web results
+if (["All","Videos","News","Shopping","News","Books"].indexOf($(".hdtb-msel").textContent)>-1)
  init()
 
 
@@ -9,7 +11,7 @@ if (["All","Videos","News","Shopping","News","Books"].indexOf(document.querySele
 
 function init() {
 
-
+  //force http to avoid mixed content block of http iframes inside https
   if (location.protocol=="https:"){
     location.href = location.href.replace("https","http")+"&gws_rd=ssl";
     return;
@@ -17,20 +19,21 @@ function init() {
 
 
 
+//#rez  container for iframes, and takes up half the page fixed position
+var rez = document.createElement('div');
+rez.id = 'rez';
+document.body.appendChild(rez);
 
 
-
-document.body.innerHTML+= "<div id='rez'></div>";
   
 function positionRez() {
-    
-    var rezWidth = (document.documentElement.clientWidth-document.querySelector(".g").offsetLeft-document.querySelector(".g").offsetWidth)
-    var rezTop = Math.max(0, document.querySelector(".sfbg.nojsv").getBoundingClientRect().bottom+1 );
+    var rezWidth = (document.documentElement.clientWidth-$(".g")[0].clientWidth)
+    var rezTop = Math.max(0, $(".sfbg.nojsv").getBoundingClientRect().bottom+1 );
 
-    document.querySelector("#rez").style.width=rezWidth + "px";
-    document.querySelector("#rez").style.top=rezTop + "px";
+    $("#rez").style.width=rezWidth + "px";
+    $("#rez").style.top=rezTop + "px";
 
-    window.disableMouseover = true;
+   // during scrolling, make the intentional lag of mouse hover slightly longer
     window.longDelayHover=true;
 
 
@@ -38,33 +41,42 @@ function positionRez() {
 };
 
 
-window.onresize = positionRez;
+window.addEventListener("resize", positionRez, 1)
 window.addEventListener("scroll", positionRez, 1)
-window.addEventListener("mousewheel", positionRez, 1) 
 positionRez()
 
 
+//listen to mouse over on container of .g then detect if on .g, 
+//to avoid having to bind listeners to new .g when those get added
 
-document.querySelector("#ires")
-.addEventListener("mouseover", function (e){
+$("#ires").addEventListener("mouseover", function (e){
 
-  console.log(e)
+    //if no-hover mode
+    if (window.disableMouseover)return; 
 
   for (var i in e.path)
       if ( e.path[i].className=="g"){
           doMouseOver(e.path[i]);
-
-
 
         break;
       }
 
 }, 0)
 
-document.querySelector("#ires")
-.addEventListener("mouseleave", function (e){
+$("#ires").addEventListener("click", function (e){
 
-  console.log(e)
+  for (var i in e.path)
+      if ( e.path[i].className=="g"){
+          doMouseOver(e.path[i]);
+
+        break;
+      }
+
+}, 0)
+
+
+$("#ires").addEventListener("mouseleave", function (e){
+
 
   for (var i in e.path)
       if ( e.path[i].className=="g"){
@@ -88,10 +100,7 @@ function doMouseLeave(g){
 
 function doMouseOver(g){
 
-     if (window.disableMouseover == true) {
-        window.disableMouseover = false;
-        //return;
-      }
+      
 
 
 
@@ -109,10 +118,16 @@ function doMouseOver(g){
 
           window.longDelayHover=false;
 
-        
+         var prior = $('.current');
 
-        var prior = document.querySelectorAll('.current')
-        for (var i in prior) if (g!=prior[i]) prior[i].className = 'g';
+          if(prior.length)
+
+              $('.current').forEach(function(cur){
+                if (g!=cur) 
+                  cur.className = 'g';
+              })
+          else
+            prior.className = 'g'
 
              g.className += " current"
 
@@ -123,14 +138,15 @@ function doMouseOver(g){
                
                var domain = (url.match(/(http:\/\/|https:\/\/)[^\/]+/gi) || [""])[0];
 
-                var rez = document.querySelector("#rez");
-
-
-          try{ //try loading url into iframe's src
+                var rez = $("#rez");
 
 
 
-              // "" 
+
+          // try inserting scrapped html into iframe, html is fetched via cors-bypassing xhr in bg
+
+          //try loading url into iframe's src
+            
 
 
                 var preloadId =  g.querySelector('h3 a').dataset.preload || '';
@@ -139,135 +155,98 @@ function doMouseOver(g){
 
 
 
-              console.log(preloadId)
-              console.log(preload)
-
-                if (preload){ //if already loaded
+                if (preload){ //if already loaded then show that iframe
                   if ( rez.querySelector('.show'))
                     rez.querySelector('.show').className='';
 
                   preload.className='show';
 
                   
-                  g.dataset.preload = "i" + document.querySelectorAll("#rez iframe").length;
+                  g.dataset.preload = "i" + $("#rez iframe").length;
 
 
                 } else{ //create new iframe for target
 
 
                   if ( rez.querySelector('.show'))
-                  rez.querySelector('.show').className='';
+                      rez.querySelector('.show').className='';
 
 
 
-                var targetUrl =  url;
+                    //set preloadid token into .g link for later recall                 
+                   g.getElementsByTagName('a')[0].dataset.preload = preloadId = "i" + $("#rez iframe").length;
 
 
 
-                targetUrl = location.protocol=="https:"?"https:":"http:" + "//hkrnews.com/get?url=" + targetUrl;
+
+                    //get target page's html via a bypass cors xhr executed from background.js
+                    chrome.runtime.sendMessage({action: 'xhr', url: url}, function(responseText) {
+                    
+                        var domain = (url.match(/(http:\/\/|https:\/\/)[^\/]+/gi) || [""])[0];
+
+                        //allow relative resource paths to load using the target's domain
+                        responseText=responseText.replace(/<head[^>]*>/i, "<head><base href='" +domain + "/'>")
+                                
+                        //could also set iframe src to be served thru hkrnews.com proxy which spoofs headers
+                        //var targetUrl = (location.protocol=="https:"?"https:":"http:") + "//hkrnews.com/get?url=" + url;
+
+
+                        //create a blank iframe with unique id 
+                        var rFrame = document.createElement('iframe');
+                        rFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts');
+                        rFrame.id = preloadId
+                        rez.appendChild(rFrame)
+                        //set blank iframe html to be the xhr html
+                        rFrame.contentDocument.querySelector("html").innerHTML = responseText;
+                        
+                        rFrame.className='show';
+                        
+
+
+                        //apply scripts to iframe result
+                        $('#rez .show').addEventListener('load', function() {
+
+              
+
+                            this.contentWindow.onkeydown = keyDownHandler;
+
+                             this.focus();
+
+
+                             //  rez.contentWindow.contentWindow.find("Google" ,0,0,0,0,0,1);
+
+                                //window.find("Google" ,0,0,0,0,1,1);
+
+                                                 
+                        }, 0)
 
 
 
-                  
-                   g.getElementsByTagName('a')[0].dataset.preload = preloadId = "i" + document.querySelectorAll("#rez iframe").length;
 
-
-                  rez.innerHTML+=("<iframe  sandbox='allow-same-origin __allow-scripts' class='show' src='"+
-                    targetUrl +"' id='" + preloadId + "' >")
-
+                    });
 
 
 
                                             
 
-                            document.querySelector('#rez .show').addEventListener('load', function() {
-
-                           
-                              try{
-
-                                var rez = document.querySelector("#rez");
-
-                                rez.contentWindow.onkeydown = keyDownHandler;
-
-                                 rez.contentWindow.focus();
 
 
-                        //  rez.contentWindow.contentWindow.find("Google" ,0,0,0,0,0,1);
-
-                                    //window.find("Google" ,0,0,0,0,1,1);
-
-                               
-                              }catch(e){
-
-                                  // disableJS();
-
-
-
-                              }
-
-                               
-
-                            }, 0)
+                } // end if create new iframe
 
 
 
 
-
-                }
-
-
-
-
-
-         }   catch(e){ // try inserting scrapped html into iframe, html is fetched via cors-bypassing xhr in bg
-
-          console.log(e)
-
-
-
-            chrome.runtime.sendMessage({
-                method: 'GET',
-                action: 'xhttp',
-                url: url
-            }, function(responseText) {
-               console.log(responseText);
-              // return;
-
-               var domain = (url.match(/(http:\/\/|https:\/\/)[^\/]+/gi) || [""])[0];
-
-               console.log(domain) // "https://hkrnews.com/get?url="+
-
-               responseText=responseText.replace(/<head[^>]*>/i, "<head><base href='" +domain + "/'>")
-                        
-
-
-                $("#rez").contentDocument.body.innerHTML = responseText;
-
-            });
-
-
-
-         }
 
 
         }, window.longDelayHover ? 700 : g.querySelector('h3 a').dataset.preload ? 0 : 350) //loadPageAfterDelayTimeout 
-
-
-
 
 
 }
 
 
 
-
-    
-
 //first on load 
-
-
-document.querySelectorAll(".g")[0].dispatchEvent(new Event('mouseover', {'bubbles': true} ));
-
+$(".g")[0].dispatchEvent(new Event('mouseover', {'bubbles': true} ));
 
 
 
@@ -275,13 +254,13 @@ window.onkeydown = keyDownHandler;
 
 function keyDownHandler(e) {
   var key = e.keyCode;
-  var cur = document.querySelector(".current");
+  var cur = $(".current");
 
 
   //get index of current
-  var gs = document.querySelectorAll(".g");
+  var gs = $(".g");
 
-  for (i=0;g=gs[++i];)
+  for (i=0;g=gs[i++];)
     if (g==cur)    
       break;
 
@@ -298,7 +277,8 @@ function keyDownHandler(e) {
   cur.scrollIntoViewIfNeeded();
 
 
-
+  if(key==192) //toggle between onmouseover and onclick  modes
+    window.disableMouseover=!window.disableMouseover;
 
   if ([113].indexOf(key)>-1) {
 

@@ -3,7 +3,9 @@
 	"description": "Search google with enhanced auto-loading results",
 	"version": "1.5",
 	"permissions": [
-        "*://*.google.com/search?*q=*"
+        "*://*.google.com/search?*q=*",
+        "http://*/", "https://*/",
+        "webNavigation"
     ],
     "content_scripts": [
         {
