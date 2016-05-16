@@ -174,7 +174,7 @@ function doMouseOver(g){
 
 
                     //set preloadid token into .g link for later recall                 
-                   g.getElementsByTagName('a')[0].dataset.preload = preloadId = "i" + $("#rez iframe").length;
+                   g.getElementsByTagName('a')[0].dataset.preload = preloadId = "i" + $("#rez").childNodes.length;
 
 
 
@@ -204,7 +204,7 @@ function doMouseOver(g){
 
 
                         //apply scripts to iframe result
-                        $('#rez .show').addEventListener('load', function() {
+                        rFrame.addEventListener('load', function() {
 
               
 

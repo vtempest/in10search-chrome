@@ -12,11 +12,12 @@
     height: 100%;
     width: 100%;
     border: 0;
-    opacity: 0;
+    display: none;
 }
 
 
 #rez iframe.show{
+    display: block;;
     opacity: 1;
     transition: opacity 0.5s 0.5 ease; 
 }
