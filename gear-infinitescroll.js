@@ -12,7 +12,7 @@ function ininiteScroll(){
        return;
     }
 
-
+   
     // detect scroll if at bottom 50px of page
     if (window.innerHeight + window.scrollY + 50 >= document.body.offsetHeight) {
 
