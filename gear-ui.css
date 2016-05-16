@@ -78,3 +78,70 @@ body {
 #slim_appbar{
     margin-left: 0px !important;
 }
+
+
+/* google search topbar fixed */
+#searchform {
+    position: fixed !important;
+}
+#gbw>div>div{
+    position: fixed;
+    right: 0px;
+}
+
+
+
+
+/* settings */
+#config{
+    position: absolute;
+    left: 99%;
+    top: 12px;
+    width: 50%;
+    font-family: 'Roboto', Verdana;
+    
+}
+
+
+
+
+
+/* uiSlider Android-style checkbox */
+.uiToggle{
+  cursor: pointer;
+  position: relative;
+  display: block;
+  margin-bottom: 15px;
+}
+.uiToggle input{
+  visibility: hidden;
+  margin-left: 45px;
+}
+input:checked~.uiToggle-ball{
+  background: #3F51B5;
+  left: 26px;
+}
+input:checked~.uiToggle-slide{
+  background: #9CA5D7;
+}
+.uiToggle-slide{
+  display: block;
+  width: 50px;
+  height: 20px;
+  background: #939393;
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  transition: .5s;
+}
+.uiToggle-ball{
+  height: 28px;
+  width: 28px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: .5s;
+}

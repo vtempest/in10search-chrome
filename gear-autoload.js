@@ -25,6 +25,8 @@ function positionRez() {
     var rezWidth = (document.documentElement.clientWidth-$(".g")[0].clientWidth)
     var rezTop = Math.max(0, $(".sfbg.nojsv").getBoundingClientRect().bottom+1 );
 
+    if (!$("#rez").style) return;
+
     $("#rez").style.width=rezWidth + "px";
     $("#rez").style.top=rezTop + "px";
 
@@ -168,85 +170,85 @@ function doMouseOver(g){
 
 
 
-                
-              //apply scripts to target page dom in the iframe
-              function onRezFrameShow(){
-                 
-                //TODO with timeout not always done
-              // $("#rez .show").onload =function() {
-
-
-                  //highlight on result page, the subtext from .g result, first phrase/sentence
-                  var g = $('.current');
-                  var queryTextNode = g.querySelectorAll(".st")[0].cloneNode(1);
-                  if (queryTextNode.querySelector(".f"))
-                    queryTextNode.removeChild(queryTextNode.querySelector(".f"))
-                  var queryText = queryTextNode.textContent.replace(/\.\.\.(.?)+/,'').trim();
-
-
-                  //execute commands in the window context of iframe
-                  var  rWindow = $("#rez .show").contentWindow;
-
-               
-                  if ( rWindow.getSelection().rangeCount) rWindow.getSelection().collapseToStart();
-                  //window.find(aString, aCaseSensitive, aBackwards, aWrapAround, aWholeWord, aSearchInFrames, aShowDialog);
-                  var found = rWindow.find(queryText,0,0,0,0,1,1);
-
-
-                  //searching first subtext phrase can fail if iframe has it as multiline, so find just bold word
-                  if (!found){
-                    var queryBoldWord = g.querySelectorAll("em")[0];
-                    if(queryBoldWord)
-                      var found = rWindow.find(queryBoldWord.textContent,0,0,0,0,1,1);
-                  }
-
-
-                   console.log(found)
-
-                  if (found){
-
-                    var throbTimesToPulsate = 2;
-                    
-
-                    function throb(){
-                      var selNode = rWindow.getSelection().anchorNode.parentNode;
-                      selNode.style.backgroundColor = "yellow";
-
-                      setTimeout(function(){
-
-                        selNode.style.backgroundColor = "";
-
-                        if (--throbTimesToPulsate)
-                            setTimeout(function(){
-                                throb();
-
-                            }, 200)
-
-                      }, 300)
-                    }
-
-                    throb()
-
-                  }
-
-                  //TODO
-                  //enable keyEvents to bubble up to main page
-                  rWindow.onkeydown = keyDownHandler;
-
-                  rWindow.focus();
-
-
-              };//end onRezFrameShow
-
-
-
-
-
 
         }, window.longDelayHover ? 700 : g.querySelector('h3 a').dataset.preload ? 0 : 350) //loadPageAfterDelayTimeout 
 
 
 }
+
+
+
+//apply scripts to target page dom in the iframe
+function onRezFrameShow(){
+   
+  //TODO with timeout not always done
+// $("#rez .show").onload =function() {
+
+
+    //highlight on result page, the subtext from .g result, first phrase/sentence
+    var g = $('.current');
+    var queryTextNode = g.querySelectorAll(".st")[0].cloneNode(1);
+    if (queryTextNode.querySelector(".f"))
+      queryTextNode.removeChild(queryTextNode.querySelector(".f"))
+    var queryText = queryTextNode.textContent.replace(/\.\.\.(.?)+/,'').trim();
+
+
+    //execute commands in the window context of iframe
+    var  rWindow = $("#rez .show").contentWindow;
+
+ 
+    if ( rWindow.getSelection().rangeCount) rWindow.getSelection().collapseToStart();
+    //window.find(aString, aCaseSensitive, aBackwards, aWrapAround, aWholeWord, aSearchInFrames, aShowDialog);
+    var found = rWindow.find(queryText,0,0,0,0,1,1);
+
+
+    //searching first subtext phrase can fail if iframe has it as multiline, so find just bold word
+    if (!found){
+      var queryBoldWord = g.querySelectorAll("em")[0];
+      if(queryBoldWord)
+        var found = rWindow.find(queryBoldWord.textContent,0,0,0,0,1,1);
+    }
+
+
+     console.log(found)
+
+    if (found){
+
+      var throbTimesToPulsate = 2;
+      
+
+      function throb(){
+        var selNode = rWindow.getSelection().anchorNode.parentNode;
+        selNode.style.backgroundColor = "yellow";
+
+        setTimeout(function(){
+
+          selNode.style.backgroundColor = "";
+
+          if (--throbTimesToPulsate)
+              setTimeout(function(){
+                  throb();
+
+              }, 200)
+
+        }, 300)
+      }
+
+      throb()
+
+    }
+
+    //TODO
+    //enable keyEvents to bubble up to main page
+    rWindow.onkeydown = keyDownHandler;
+
+    rWindow.focus();
+
+
+};//end onRezFrameShow
+
+
+
 
 
 
@@ -295,5 +297,22 @@ function keyDownHandler(e) {
 
 
 }
+
+
+
+//SETTINGS
+
+$("#searchform form").innerHTML+='<div id="config">'+
+  '<label class="uiToggle"><input id="configMouseoverMode" checked="checked" type="checkbox">'+
+  '<span class="uiToggle-slide"></span><span class="uiToggle-ball"></span>Mouse Hover Mode</label>'+
+  '</div>';
+
+$("#configMouseoverMode").onchange = function(){
+  window.disableMouseover = !this.checked;
+}
+
+
+
+
 
 } // end init
