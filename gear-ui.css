@@ -30,108 +30,95 @@
     __transition: 0.1s .5s;
     transition: opacity 0.2s 0 ease;
 }
+.solar .current {
+    background: #BDE0FF;
+}
 
 
 /* restyle google default page */
 
-#center_col {
+html:not(.disableAutoloadApp) #center_col {
     margin-left: 0px !important;
 }
-
-.hdtb-mitem.hdtb-imb {
+html:not(.disableAutoloadApp) .hdtb-mitem.hdtb-imb {
     margin-left: 15px !important;
 }
 
-#footcnt,
-.rgsep,
-#extrares,
-#foot {
+html:not(.disableAutoloadApp) #footcnt,
+html:not(.disableAutoloadApp) .rgsep,
+html:not(.disableAutoloadApp) #extrares,
+html:not(.disableAutoloadApp) #foot {
     display: none;
 }
 
-.g {
+html:not(.disableAutoloadApp) .g {
     padding-right: 5px;
 }
 
-#hdtbSum {
+html:not(.disableAutoloadApp) #hdtbSum {
     border: 0 !important;
 }
 
-#slim_appbar {
+html:not(.disableAutoloadApp) #slim_appbar {
     margin-left: 0px !important;
 }
 
+/* shrink searchbox */
+
+html:not(.disableAutoloadApp) #tsf{
+    max-width: 33% !important;
+}
+html:not(.disableAutoloadApp) .sfibbbc{
+    max-width: 100% !important;
+}
 
 /* google search topbar fixed */
 
-#searchform {
+html:not(.disableAutoloadApp) #searchform {
     position: fixed !important;
 }
 
-#gbw>div>div {
+html:not(.disableAutoloadApp) #gbw>div>div {
     position: fixed;
     right: 0px;
 }
 
-#ab_ctls {
-    right: 0px;
+html:not(.disableAutoloadApp) #ab_ctls {
+    right: 0px !important;
     top: -5px;
+}
+
+
+
+
+/* solar */
+.solar{
+	-webkit-filter: invert(100%);
+}
+.solar img, .solar *[style*=background-image]{
+	-webkit-filter: invert(100%) !important;
+}
+#cnt{
+    background: white;
 }
 
 /* settings */
 #config {
     position: absolute;
-    left: 99%;
-    top: 13px;
-    width: 110%;
+    left: 100%;
+    top: 0px;
+    width: 150%;
+
+    height: 34px;
     font-family: 'Roboto', Verdana;
     font-size: 11pt;
+
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    background: rgb(241, 241, 241);
+
+    padding: 13px 12px 6px;
+    border-bottom: 1px solid #e5e5e5;
 }
 
-
-/* uiSlider Android-style checkbox */
-
-.uiToggle {
-    cursor: pointer;
-    position: relative;
-    display: inline-block;
-    margin-bottom: 15px;
-    margin-right: 15px;
-}
-
-.uiToggle input {
-    visibility: hidden;
-    margin-left: 45px;
-}
-
-input:checked~.uiToggle-ball {
-    background: #4285F5;
-    left: 26px;
-}
-
-input:checked~.uiToggle-slide {
-    background: #a2c2fa;
-}
-
-.uiToggle-slide {
-    display: block;
-    width: 50px;
-    height: 20px;
-    background: #939393;
-    border-radius: 10px;
-    position: absolute;
-    top: 0;
-    transition: .5s;
-}
-
-.uiToggle-ball {
-    height: 28px;
-    width: 28px;
-    border-radius: 50%;
-    background: white;
-    position: absolute;
-    top: -4px;
-    left: -4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-    transition: .5s;
-}

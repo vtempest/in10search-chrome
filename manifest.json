@@ -5,14 +5,16 @@
 	"permissions": [
         "*://*.google.com/search?*q=*",
         "http://*/", "https://*/",
-        "webNavigation"
+        "webNavigation",
+        "storage" 
     ],
     "content_scripts": [
         {
             "matches": [ "*://*.google.com/search?*q=*" ],
             "js": ["gear-autoload.js", "gear-infinitescroll.js"],
-            "css": ["gear-ui.css"]
-
+            "css": ["gear-ui.css", "uiToggle.css"],
+            "run_at": "document_start",
+            "all_frames": true
         }
     ],
     "background": {
@@ -23,5 +25,9 @@
 	"icons": {
 		"64": "icon.png"
 	},
+    "options_ui": {
+        "page": "options.html",
+        "chrome_style": true
+      },
 	"manifest_version": 2
 }
