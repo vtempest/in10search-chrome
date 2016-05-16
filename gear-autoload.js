@@ -46,8 +46,8 @@ positionRez()
 
 $("#ires").addEventListener("mouseover", function (e){
 
-    //if no-hover mode
-    if (window.disableMouseover)return; 
+  //if no-hover mode
+  if (!window.enableHoverMode.checked) return; 
 
   for (var i in e.path)
       if ( e.path[i].className=="g"){
@@ -159,9 +159,10 @@ function doMouseOver(g){
                     
                     //show iframe
                     rez.querySelector("#"+preloadId).className='show';
+                    $(".show").style.opacity=0;
 
                     //apply scripts to target page dom in the iframe
-                    setTimeout(onRezFrameShow, 100)
+                    setTimeout(onRezFrameShow, 50)
 
 
                 });//end xhr
@@ -183,6 +184,8 @@ function onRezFrameShow(){
    
   //TODO with timeout not always done
 // $("#rez .show").onload =function() {
+  
+    $(".show").style.opacity=1;
 
 
     //highlight on result page, the subtext from .g result, first phrase/sentence
@@ -210,11 +213,10 @@ function onRezFrameShow(){
     }
 
 
-     console.log(found)
 
-    if (found){
+    if (found && window.pulsateQuery){
 
-      var throbTimesToPulsate = 2;
+      var throbTimesToPulsate = 3;
       
 
       function throb(){
@@ -237,6 +239,8 @@ function onRezFrameShow(){
       throb()
 
     }
+
+
 
     //TODO
     //enable keyEvents to bubble up to main page
@@ -284,7 +288,7 @@ function keyDownHandler(e) {
 
 
   if(key==192) //toggle between onmouseover and onclick  modes
-    window.disableMouseover=!window.disableMouseover;
+    window.enableHoverMode.checked=!window.enableHoverMode.checked;
 
   if ([113].indexOf(key)>-1) {
 
@@ -303,13 +307,29 @@ function keyDownHandler(e) {
 //SETTINGS
 
 $("#searchform form").innerHTML+='<div id="config">'+
-  '<label class="uiToggle"><input id="configMouseoverMode" checked="checked" type="checkbox">'+
-  '<span class="uiToggle-slide"></span><span class="uiToggle-ball"></span>Mouse Hover Mode</label>'+
-  '</div>';
+  '<label class="uiToggle"><input id="enableHoverMode" checked="checked" type="checkbox">'+
+  '<span class="uiToggle-slide"></span><span class="uiToggle-ball"></span>Hover Mode</label>'+
 
-$("#configMouseoverMode").onchange = function(){
-  window.disableMouseover = !this.checked;
+  '<label class="uiToggle"><input id="enablePulsateQuery" checked="checked" type="checkbox">'+
+  '<span class="uiToggle-slide"></span><span class="uiToggle-ball"></span>Pulsate Query</label>'+
+
+  '<label class="uiToggle"><input id="enableInfiniteScroll" checked="checked" type="checkbox">'+
+  '<span class="uiToggle-slide"></span><span class="uiToggle-ball"></span>Infinite Scroll</label>'+
+ '</div>';
+
+$("#enablePulsateQuery").onchange = function(){
+  window.pulsateQuery = this.checked;
 }
+
+$("#enableInfiniteScroll").onchange = function(){
+    $("#foot").style.display = this.checked ? "none" : "block"; 
+    //TODO move cur page up 
+}
+
+
+
+
+
 
 
 

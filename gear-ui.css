@@ -17,11 +17,11 @@
     top: 0;
     right: 0;
 
-  opacity: 0;
-  visibility: hidden;
-  transition-property: opacity, visibility;
-  transition-duration: 1s, 0;
-  transition-delay: 0, 1s;
+    opacity: 0;
+    visibility: hidden;
+    transition-property: opacity, visibility;
+    transition-duration: .5s, 0;
+    transition-delay: 0, .5s;
 }
 
 
@@ -31,7 +31,7 @@
 
 
    opacity: 1;
-   transition: opacity 1s ease-in-out;
+   transition: opacity .5s ease-in-out;
 
 }
 
@@ -47,8 +47,7 @@
 
 
 
-/*   restyle google default page */
-
+/* restyle google default page */
 
 #center_col{
     margin-left: 0px !important;
@@ -56,10 +55,6 @@
 
 .hdtb-mitem.hdtb-imb{
     margin-left: 15px !important;
-}
-
-body {
-    __margin-left: -120px !important;
 }
 
 
@@ -96,10 +91,11 @@ body {
 #config{
     position: absolute;
     left: 99%;
-    top: 12px;
-    width: 50%;
+    top: 13px;
+    width: 100%;
     font-family: 'Roboto', Verdana;
-    
+    font-size: 11pt;
+
 }
 
 
@@ -110,19 +106,20 @@ body {
 .uiToggle{
   cursor: pointer;
   position: relative;
-  display: block;
+  display: inline-block;
   margin-bottom: 15px;
+  margin-right: 15px;
 }
 .uiToggle input{
   visibility: hidden;
   margin-left: 45px;
 }
 input:checked~.uiToggle-ball{
-  background: #3F51B5;
+  background: #4285F5;
   left: 26px;
 }
 input:checked~.uiToggle-slide{
-  background: #9CA5D7;
+  background: #a2c2fa;
 }
 .uiToggle-slide{
   display: block;

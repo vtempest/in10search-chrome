@@ -8,6 +8,10 @@ for (var i=0;p=document.querySelectorAll("#navcnt .fl")[i];i++)
 
 function ininiteScroll(){
 
+    if (window.enableInfiniteScroll && !window.enableInfiniteScroll.checked) {
+       return;
+    }
+
 
     // detect scroll if at bottom 50px of page
     if (window.innerHeight + window.scrollY + 50 >= document.body.offsetHeight) {
