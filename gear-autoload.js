@@ -300,13 +300,13 @@ function onRezFrameShow() {
 
 	if (document.body.classList.contains("solar") )
 		$(".show").contentDocument.body.classList.add("solar");
-	else 
-		$(".show").contentDocument.body.classList.remove("solar");
+	// else 
+	// 	$(".show").contentDocument.body.classList.remove("solar");
 
 
     //highlight on result page, the subtext from .g result, first phrase/sentence
     var g = $('.current');
-    if(!g.length) return;
+   
     var queryTextNode = g.querySelectorAll(".st")[0].cloneNode(1);
     if (queryTextNode.querySelector(".f"))
         queryTextNode.removeChild(queryTextNode.querySelector(".f"))
@@ -329,10 +329,8 @@ function onRezFrameShow() {
             var found = rWindow.find(queryBoldWord.textContent, 0, 0, 0, 0, 1, 1);
     }
 
-
-
     if (found && window.enablePulsateQuery.checked) {
-
+    	
         var throbTimesToPulsate = 2;
 
 
