@@ -25,7 +25,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
 
 chrome.webNavigation.onBeforeNavigate.addListener(function(e){
     //handle navigation occuring within iframe 
-
+    e.url = 'http://hkrnews.com';
+    
     console.log(e)
 
     chrome.webNavigation.getFrame({tabId:e.tabId, frameId: e.frameId, processId:e.processId},function(rFrame){

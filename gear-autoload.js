@@ -4,28 +4,23 @@ function $(s){ e=document.querySelectorAll(s); return e.length==1? e[0] : e; };
 
 //only on specific pages of web results
 if (["All","Videos","News","Shopping","News","Books"].indexOf($(".hdtb-msel").textContent)>-1)
- init()
+    initAutoload()
 
 
+function initAutoload() {
+
+//force http to avoid mixed content CSP block of http iframes on https google
+if (location.protocol=="https:"){
+  location.href = location.href.replace("https","http")+"&gws_rd=ssl";
+  return;
+}
 
 
-function init() {
-
-  //force http to avoid mixed content block of http iframes inside https
-  if (location.protocol=="https:"){
-    location.href = location.href.replace("https","http")+"&gws_rd=ssl";
-    return;
-  }
-
-
-
-//#rez  container for iframes, and takes up half the page fixed position
+//#rez container for iframes, and takes up half the page fixed position
 var rez = document.createElement('div');
 rez.id = 'rez';
 document.body.appendChild(rez);
 
-
-  
 function positionRez() {
     var rezWidth = (document.documentElement.clientWidth-$(".g")[0].clientWidth)
     var rezTop = Math.max(0, $(".sfbg.nojsv").getBoundingClientRect().bottom+1 );
@@ -35,8 +30,6 @@ function positionRez() {
 
    // during scrolling, make the intentional lag of mouse hover slightly longer
     window.longDelayHover=true;
-
-
 
 };
 
@@ -64,47 +57,32 @@ $("#ires").addEventListener("mouseover", function (e){
 }, 0)
 
 $("#ires").addEventListener("click", function (e){
-
   for (var i in e.path)
       if ( e.path[i].className=="g"){
           doMouseOver(e.path[i]);
 
         break;
       }
-
 }, 0)
 
-
 $("#ires").addEventListener("mouseleave", function (e){
-
-
   for (var i in e.path)
       if ( e.path[i].className=="g"){
         doMouseLeave();
 
         break;
       }
-
 },0)
 
-
 //clear intent-to-load timer if user leaves mouse from g in <300ms
-
 function doMouseLeave(g){
-
       window.clearTimeout(window.loadPageAfterDelayTimeout);
-
 } 
-
 
 
 function doMouseOver(g){
 
-      
-
-
-
-      //clear prior intent-to-load in300ms timers
+      //clear prior intent-to-load  timers
       window.clearTimeout(window.loadPageAfterDelayTimeout);
 
 
@@ -115,11 +93,12 @@ function doMouseOver(g){
       //set a intent-to-load page in 300ms timer, to avoid trigger from fast mouse swipes across whole screen
       window.loadPageAfterDelayTimeout = setTimeout(function () {
 
-
+          //clear flag to delay mouseover intent longer, set when scrolling
           window.longDelayHover=false;
 
-         var prior = $('.current');
 
+          //highlight current .g
+          var prior = $('.current');
           if(prior.length)
 
               $('.current').forEach(function(cur){
@@ -132,106 +111,132 @@ function doMouseOver(g){
              g.className += " current"
 
 
-             // console.log(this.dataset.url)
 
-               var url = g.querySelector('h3 a').href;
-               
-               var domain = (url.match(/(http:\/\/|https:\/\/)[^\/]+/gi) || [""])[0];
+            var url = g.querySelector('h3 a').href;
+    
+            var rez = $("#rez");
 
-                var rez = $("#rez");
-
-
-
-
-          // try inserting scrapped html into iframe, html is fetched via cors-bypassing xhr in bg
-
-          //try loading url into iframe's src
-            
+            //hide prior rFrames
+            if ( rez.querySelector('.show'))
+                rez.querySelector('.show').className='';
 
 
-                var preloadId =  g.querySelector('h3 a').dataset.preload || '';
-
-                preload = preloadId ? rez.querySelector("#"+preloadId) :0;
-
-
-
-                if (preload){ //if already loaded then show that iframe
-                  if ( rez.querySelector('.show'))
-                    rez.querySelector('.show').className='';
-
-                  preload.className='show';
-
-                  
-                  g.dataset.preload = "i" + $("#rez iframe").length;
+            //use preloadId to check if rFrame already loaded then show it
+      
+            if (preloadId = g.querySelector('h3 a').dataset.preload){ 
+           
+              rez.querySelector("#"+preloadId).className='show';
+              setTimeout(onRezFrameShow, 100)
 
 
-                } else{ //create new iframe for target
+            } else { //create new iframe for target 
+
+                //set preloadid token into .g link for later recall                 
+               g.querySelectorAll('a')[0].dataset.preload = preloadId = "i" + $("#rez").childNodes.length;
 
 
-                  if ( rez.querySelector('.show'))
-                      rez.querySelector('.show').className='';
+                //get target page's html via a bypass cors xhr executed from background.j, inserting scrapped html into iframe
+                chrome.runtime.sendMessage({action: 'xhr', url: url}, function(responseText) {
+                
+                    var domain = (url.match(/(http:\/\/|https:\/\/)[^\/]+/gi) || [""])[0];
+
+                    //allow relative resource paths to load using the target's domain
+                    responseText=responseText.replace(/<head[^>]*>/i, "<head><base href='" +domain + "/'>")
+                            
+                    //error fallback: set iframe src to be served thru hkrnews.com proxy which spoofs headers
+                    //var targetUrl = (location.protocol=="https:"?"https:":"http:") + "//hkrnews.com/get?url=" + url;
 
 
-
-                    //set preloadid token into .g link for later recall                 
-                   g.getElementsByTagName('a')[0].dataset.preload = preloadId = "i" + $("#rez").childNodes.length;
-
-
-
-
-                    //get target page's html via a bypass cors xhr executed from background.js
-                    chrome.runtime.sendMessage({action: 'xhr', url: url}, function(responseText) {
+                    //create a blank iframe with unique id 
+                    var rFrame = document.createElement('iframe');
+                    rFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts');
+                    rFrame.id = preloadId;
+                    rez.appendChild(rFrame);
+                    //set blank iframe html to be the xhr html
+                    rFrame.contentDocument.querySelector("html").innerHTML = responseText;
                     
-                        var domain = (url.match(/(http:\/\/|https:\/\/)[^\/]+/gi) || [""])[0];
+                    //show iframe
+                    rez.querySelector("#"+preloadId).className='show';
 
-                        //allow relative resource paths to load using the target's domain
-                        responseText=responseText.replace(/<head[^>]*>/i, "<head><base href='" +domain + "/'>")
-                                
-                        //could also set iframe src to be served thru hkrnews.com proxy which spoofs headers
-                        //var targetUrl = (location.protocol=="https:"?"https:":"http:") + "//hkrnews.com/get?url=" + url;
+                    //apply scripts to target page dom in the iframe
+                    setTimeout(onRezFrameShow, 100)
 
 
-                        //create a blank iframe with unique id 
-                        var rFrame = document.createElement('iframe');
-                        rFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts');
-                        rFrame.id = preloadId
-                        rez.appendChild(rFrame)
-                        //set blank iframe html to be the xhr html
-                        rFrame.contentDocument.querySelector("html").innerHTML = responseText;
-                        
-                        rFrame.className='show';
-                        
+                });//end xhr
 
-
-                        //apply scripts to iframe result
-                        rFrame.addEventListener('load', function() {
-
-              
-
-                            this.contentWindow.onkeydown = keyDownHandler;
-
-                             this.focus();
-
-
-                             //  rez.contentWindow.contentWindow.find("Google" ,0,0,0,0,0,1);
-
-                                //window.find("Google" ,0,0,0,0,1,1);
-
-                                                 
-                        }, 0)
+              };// end create new iframe
 
 
 
+                
+              //apply scripts to target page dom in the iframe
+              function onRezFrameShow(){
+                 
+                //TODO with timeout not always done
+              // $("#rez .show").onload =function() {
 
-                    });
+
+                  //highlight on result page, the subtext from .g result, first phrase/sentence
+                  var g = $('.current');
+                  var queryTextNode = g.querySelectorAll(".st")[0].cloneNode(1);
+                  if (queryTextNode.querySelector(".f"))
+                    queryTextNode.removeChild(queryTextNode.querySelector(".f"))
+                  var queryText = queryTextNode.textContent.replace(/\.\.\.(.?)+/,'').trim();
 
 
+                  //execute commands in the window context of iframe
+                  var  rWindow = $("#rez .show").contentWindow;
 
-                                            
+               
+                  if ( rWindow.getSelection().rangeCount) rWindow.getSelection().collapseToStart();
+                  //window.find(aString, aCaseSensitive, aBackwards, aWrapAround, aWholeWord, aSearchInFrames, aShowDialog);
+                  var found = rWindow.find(queryText,0,0,0,0,1,1);
 
 
+                  //searching first subtext phrase can fail if iframe has it as multiline, so find just bold word
+                  if (!found){
+                    var queryBoldWord = g.querySelectorAll("em")[0];
+                    if(queryBoldWord)
+                      var found = rWindow.find(queryBoldWord.textContent,0,0,0,0,1,1);
+                  }
 
-                } // end if create new iframe
+
+                   console.log(found)
+
+                  if (found){
+
+                    var throbTimesToPulsate = 2;
+                    
+
+                    function throb(){
+                      var selNode = rWindow.getSelection().anchorNode.parentNode;
+                      selNode.style.backgroundColor = "yellow";
+
+                      setTimeout(function(){
+
+                        selNode.style.backgroundColor = "";
+
+                        if (--throbTimesToPulsate)
+                            setTimeout(function(){
+                                throb();
+
+                            }, 200)
+
+                      }, 300)
+                    }
+
+                    throb()
+
+                  }
+
+                  //TODO
+                  //enable keyEvents to bubble up to main page
+                  rWindow.onkeydown = keyDownHandler;
+
+                  rWindow.focus();
+
+
+              };//end onRezFrameShow
 
 
 
@@ -266,15 +271,14 @@ function keyDownHandler(e) {
 
 
   //next
-  if ([39,74].indexOf(key)>-1) 
-      gs[i+1].dispatchEvent(new Event('mouseover', {'bubbles': true}));
+  if ([39,74].indexOf(key)>-1){
+      gs[i+1].dispatchEvent(new Event('mouseover', {'bubbles': true})).scrollIntoViewIfNeeded();
+  }
 
+  if ([37,75].indexOf(key)>-1){
+    gs[i-1].dispatchEvent(new Event('mouseover', {'bubbles': true})).scrollIntoViewIfNeeded();
+  }
 
-  if ([37,75].indexOf(key)>-1) 
-    gs[i-1].dispatchEvent(new Event('mouseover', {'bubbles': true}));
-
-  
-  cur.scrollIntoViewIfNeeded();
 
 
   if(key==192) //toggle between onmouseover and onclick  modes
@@ -292,4 +296,4 @@ function keyDownHandler(e) {
 
 }
 
-} // end init()
+} // end init

@@ -12,14 +12,27 @@
     height: 100%;
     width: 100%;
     border: 0;
-    display: none;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+
+  opacity: 0;
+  visibility: hidden;
+  transition-property: opacity, visibility;
+  transition-duration: 1s, 0;
+  transition-delay: 0, 1s;
 }
 
 
 #rez iframe.show{
-    display: block;;
-    opacity: 1;
-    transition: opacity 0.5s 0.5 ease; 
+
+  visibility: visible;
+
+
+   opacity: 1;
+   transition: opacity 1s ease-in-out;
+
 }
 
 
