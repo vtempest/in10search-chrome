@@ -94,9 +94,14 @@ html:not(.disableAutoloadApp) #ab_ctls {
 /* solar */
 .solar{
 	-webkit-filter: invert(100%);
+    transition: 1.5s;
 }
-.solar img, .solar *[style*=background-image]{
-	-webkit-filter: invert(100%) !important;
+body:not(.solar){
+    transition: 1.5s;
+}
+.solar img{
+	-webkit-filter: invert(100%) !important;   
+    transition: 1.5s;
 }
 #cnt{
     background: white;
