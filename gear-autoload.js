@@ -17,8 +17,8 @@ if (localStorage['enableAutoload']!="true"){
 } else { //if app enabled
 
 	//force http to avoid mixed content CSP block of http iframes on https google
-	if (location.protocol == "https:") 
-	    location.href = location.href.replace("https", "http") + "&gws_rd=ssl";
+	 if (location.protocol == "https:" && localStorage['enableAutoload']=="true") 
+	     location.href = location.href.replace("https", "http") + "&gws_rd=ssl";
 	   
 }
 
@@ -133,7 +133,7 @@ function positionRez() {
 //listen to mouse over on container of .g then detect if on .g, 
 //to avoid having to bind listeners to new .g when those get added
 
-$("#ires").addEventListener("mouseover", function(e) {
+$("body").addEventListener("mouseover", function(e) {
 
     //if no-hover mode
     if (window.enableHoverMode && !window.enableHoverMode.checked) return;
@@ -147,7 +147,7 @@ $("#ires").addEventListener("mouseover", function(e) {
 
 }, 0)
 
-$("#ires").addEventListener("click", function(e) {
+$("body").addEventListener("click", function(e) {
     for (var i in e.path)
         if (e.path[i].className == "g") {
             doMouseOver(e.path[i]);
@@ -156,7 +156,7 @@ $("#ires").addEventListener("click", function(e) {
         }
 }, 0)
 
-$("#ires").addEventListener("mouseout", function(e) {
+$("body").addEventListener("mouseout", function(e) {
 
     for (var i in e.path)
         if (e.path[i].className == "g") {

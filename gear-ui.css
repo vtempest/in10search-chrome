@@ -109,14 +109,13 @@ html:not(.disableAutoloadApp) #ab_ctls {
     top: 0px;
     width: 120%;
 
-    height: 34px;
     font-family: 'Roboto', Verdana;
     font-size: 11pt;
 
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    background: rgb(241, 241, 241);
+    background-color: rgb(241, 241, 241);
 
     padding: 13px 12px 6px;
     border-bottom: 1px solid #e5e5e5;
