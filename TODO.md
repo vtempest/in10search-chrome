@@ -4,7 +4,8 @@
 ####fix
 https>http - webrequest api
 detection of mouseover path
-reup dom init on instant type
+arrows should inf scroll/click next
+going to news with web results inf scroll pages on bottom 
 
 ####features:
 infinitescroll check errs
@@ -19,3 +20,6 @@ restyle google search page
 put past iframes in background, then if needed recall instantly
 infinite scroll 100 
 scroll and highlight the query words on result. window.find broken
+
+
+->| resizer

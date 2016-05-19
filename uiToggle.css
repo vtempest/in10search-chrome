@@ -4,8 +4,7 @@
     cursor: pointer;
     position: relative;
     display: inline-block;
-    margin-bottom: 15px;
-    margin-right: 15px;
+    margin: 15px 8px;
 }
 
 .uiToggle input {

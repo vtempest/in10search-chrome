@@ -10,7 +10,7 @@
     ],
     "content_scripts": [
         {
-            "matches": [ "*://*.google.com/search?*q=*" ],
+            "matches": [ "*://*.google.com/search?*q=*" ,"file:///*", ,"file://*"],
             "js": ["gear-autoload.js", "gear-infinitescroll.js"],
             "css": ["gear-ui.css", "uiToggle.css"],
             "run_at": "document_start",

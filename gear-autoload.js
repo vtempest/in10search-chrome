@@ -31,12 +31,34 @@ function $(s) {
     return e.length == 1 ? e[0] : e; 
 };
 
+NodeList.prototype.forEach = Array.prototype.forEach;
+
+
+
+
+function xhr(url, cb){
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onload = function() {
+      if (this.status >= 200 && this.status < 400) 
+        cb(xhr.responseText)
+      else 
+        console.log(xhr)
+    };
+    xhr.onerror = function() {
+        console.log(xhr)
+    };
+    xhr.send();
+}
 
 
 
 document.addEventListener("DOMContentLoaded", function(){
 
+setTimeout(function(){
+    document.querySelector("html").style.opacity = 1;
 
+},30)
 
 //only on specific pages of web results
 if (["All", "Videos", "News", "Shopping", "News", "Books"].indexOf($(".hdtb-msel").textContent) == -1)
@@ -60,12 +82,12 @@ window.addConfig = function(id, label, checked, onchange) {
 			var options={};
 			options[id] = this.checked;
 	    	chrome.storage.sync.set(options);
-	  		setTimeout(onchange,300)
+	  		if (onchange) onchange()
 		},1)
 
 
 		//reinit settings to apply on load, except reload functions
-		 if (id!="enableAutoload")
+		 if (id!="enableAutoload" && window[id])
 		 	window[id].dispatchEvent(new Event('change')); 
 
     },1)
@@ -74,7 +96,9 @@ window.addConfig = function(id, label, checked, onchange) {
 
 
 addConfig('enableAutoload', 'Enable Autoload', 1, function(){
-	location.reload();
+	setTimeout(function(){
+        location.reload();
+    }, 500);
 });
 
 //if extension disabled, quit after setting the enable switch
@@ -99,7 +123,7 @@ addConfig('enableSolarizedColor', 'Solarize', 0, function() {
 });
 
 //move google's settings button
-document.querySelector("#config").appendChild(window.ab_ctls)
+window.searchform.appendChild(window.ab_ctls)
 
 
 
@@ -167,8 +191,6 @@ $("body").addEventListener("mouseout", function(e) {
 }, 0)
 
 
-//load first result link in iframe
-$(".g")[0].dispatchEvent(new Event('mouseover', { 'bubbles': true }));
 
 
 //clear intent-to-load timer if user leaves mouse from g in <300ms
@@ -195,10 +217,11 @@ function doMouseOver(g) {
 
 
             //hide prior rFrames
-            document.querySelectorAll('.current').forEach(function(cur) {
+            document.querySelectorAll('.current').forEach(function(cur){
                 if (g != cur)
                     cur.className = 'g';
             })
+                
             if (document.querySelector('.show'))
                   document.querySelector('.show').className = '';
 
@@ -206,6 +229,7 @@ function doMouseOver(g) {
 
                 //highlight current .g
                 g.className += " current"
+
 
 
 
@@ -222,61 +246,30 @@ function doMouseOver(g) {
 
                     rez.querySelector("#" + preloadId).style.opacity = 0;
                     rez.querySelector("#" + preloadId).className = 'show';
-                    onRezFrameShow()
+                    onFrameShow()
 
 
                 } else { //create new iframe for target 
 
-                    //set preloadid token into .g link for later recall                 
+                     //set preloadid token into .g link for later recall                 
                     g.querySelectorAll('a')[0].dataset.preload = preloadId = "i" + $("#rez").childNodes.length;
 
 
-                    //get target page's html via a bypass cors xhr executed from background.j, inserting scrapped html into iframe
-                    chrome.runtime.sendMessage({ action: 'xhr', url: url }, function(responseText) {
 
-                        var domain = (url.match(/(http:\/\/|https:\/\/)[^\/]+/gi) || [""])[0];
-
-                        //allow relative resource paths to load using the target's domain
-                        responseText = responseText.replace(/<head[^>]*>/i, "<head><base href='" + domain + "/'>"+
-                        	"<style>.solar img{	-webkit-filter: invert(100%) !important; }</style>");
-
-                        //error fallback: set iframe src to be served thru hkrnews.com proxy which spoofs headers
-                        //var targetUrl = (location.protocol=="https:"?"https:":"http:") + "//hkrnews.com/get?url=" + url;
-
-
-                        //create a blank iframe with unique id 
-                        var rFrame = document.createElement('iframe');
-                        rFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts');
-                        rFrame.id = preloadId;
-                        rez.appendChild(rFrame);
-                        rFrame.addEventListener("load", function(e){
-                            alert(e)
-
-                        },0)
-
-
-                        //  var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-
-                         // var observer = new MutationObserver(onRezFrameShow);
-
-                        //  observer.observe(rFrame.contentDocument.querySelector("html"), { childList: true, subtree: true });
-
-
-                        //set blank iframe html to be the xhr html
-                        rFrame.contentDocument.querySelector("html").innerHTML = responseText;
+                    xhrFrame(url, preloadId, function(rFrame){
 
                         //show iframe
-                        rez.querySelector("#" + preloadId).className = 'show';
-                        $(".show").style.opacity = 0;
+                        rFrame.className = 'show';
+                        rFrame.style.opacity = 0;
 
                         //apply scripts to target page dom in the iframe
-                        setTimeout(onRezFrameShow, 130)
+                        setTimeout(onFrameShow, 130)
 
-
-                    }); //end xhr
+                    })
+                   
+                    
 
                 }; // end create new iframe
-
 
 
 
@@ -286,9 +279,53 @@ function doMouseOver(g) {
 }
 
 
+function xhrFrame(url, preloadId, callback){
+        //get target page's html via a bypass cors xhr executed from background.j, inserting scrapped html into iframe
+    chrome.runtime.sendMessage({ action: 'xhr', url: url }, function(responseText) {
+
+        var domain = (url.match(/(http:\/\/|https:\/\/)[^\/]+/gi) || [""])[0];
+
+        //allow relative resource paths to load using the target's domain
+        responseText = responseText.replace(/<head[^>]*>/i, "<head><base href='" + domain + "/'>"+
+            "<style>.solar img{ -webkit-filter: invert(100%) !important; transition: 1.5s; }</style>");
+
+        //error fallback: set iframe src to be served thru hkrnews.com proxy which spoofs headers
+        //var targetUrl = (location.protocol=="https:"?"https:":"http:") + "//hkrnews.com/get?url=" + url;
+
+
+        //create a blank iframe with unique id 
+        var rFrame = document.createElement('iframe');
+        rFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts');
+        rFrame.id = preloadId;
+        rez.appendChild(rFrame);
+        rFrame.addEventListener("load", function(e){
+            console.log(e)
+            //this is for redirects on a[href] by user in iframe
+
+        },0)
+
+
+        //  var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+
+         // var observer = new MutationObserver(onFrameShow);
+
+        //  observer.observe(rFrame.contentDocument.querySelector("html"), { childList: true, subtree: true });
+
+
+        //set blank iframe html to be the xhr html
+        rFrame.contentDocument.querySelector("html").innerHTML = responseText;
+
+        callback(rFrame)
+
+        
+
+    }); //end xhr
+    
+}
+
 
 //apply scripts to target page dom in the iframe
-function onRezFrameShow() {
+function onFrameShow() {
 
     //TODO with timeout not always done
     // $("#rez .show").onload =function() {
@@ -300,13 +337,12 @@ function onRezFrameShow() {
 
 	if (document.body.classList.contains("solar") )
 		$(".show").contentDocument.body.classList.add("solar");
-	// else 
-	// 	$(".show").contentDocument.body.classList.remove("solar");
+	 else 
+	 	$(".show").contentDocument.body.classList.remove("solar");
 
 
     //highlight on result page, the subtext from .g result, first phrase/sentence
-    var g = $('.current');
-   
+    var g = document.querySelector('.current');
     var queryTextNode = g.querySelectorAll(".st")[0].cloneNode(1);
     if (queryTextNode.querySelector(".f"))
         queryTextNode.removeChild(queryTextNode.querySelector(".f"))
@@ -366,12 +402,12 @@ function onRezFrameShow() {
 
 
 
-}; //end onRezFrameShow
+}; //end onFrameShow
 
 
 
 //KEYBOARD SHORTCUTS
-window.onkeydown = keyDownHandler;
+window.onkeypress = keyDownHandler;
 
 function keyDownHandler(e) {
     var key = e.keyCode;
@@ -402,12 +438,17 @@ function keyDownHandler(e) {
 
 
     //settings ctrl+f1 toggles
-    if (e.ctrlKey && key == 112) //toggle between onmouseover and onclick  modes
-        window.enableHoverMode.checked = !window.enableHoverMode.checked;
-    if (e.ctrlKey && key == 113)
-        window.enablePulsateQuery.checked = !window.enablePulsateQuery.checked;
-    if (e.ctrlKey && key == 114)
-        window.enableInfiniteScroll.checked = !window.enableInfiniteScroll.checked;
+    if (e.altKey && e.ctrlKey && key >= 49 && key < 55) {
+    	var checkbox = window.config.childNodes[key-49];
+    	if (checkbox){
+    		checkbox = checkbox.querySelector("input");
+        	checkbox.checked = !checkbox.checked;
+        	checkbox.dispatchEvent(new Event('change'));
+
+	    	e.stopPropagation();	
+    	}
+	
+    }
 
 
     if ([113].indexOf(key) > -1) {
@@ -430,6 +471,46 @@ function keyDownHandler(e) {
 
 
 
+
+//FIRST LOAD
+
+
+//load first result link in iframe
+$(".g")[0].dispatchEvent(new Event('click', { 'bubbles': true }));
+
+
+
+//preload frames for background cache
+setTimeout(function(){
+
+    
+    var gs = $(".g");
+
+    for(var i=1;i<4;i++){
+
+        //set preloadid token into .g link for later recall                 
+        gs[i].querySelectorAll('a')[0].dataset.preload = preloadId = "i" + ($("#rez").childNodes.length-1+i);
+        var url = gs[i].querySelector('h3 a').href;
+
+
+        xhrFrame(url, preloadId, function(rFrame){
+
+           // rFrame.style.opacity = 0;
+           // rFrame.style.visibility="visible";
+
+
+            //apply scripts to target frame, useful in pre-cache for scroll position
+            onFrameShow();
+
+        })
+
+
+
+
+    }
+
+
+}, 2000)
 
 
 //listeners

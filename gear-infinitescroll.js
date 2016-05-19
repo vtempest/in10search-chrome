@@ -4,13 +4,8 @@ document.addEventListener("DOMContentLoaded", function(){
   var nextPages = {urls: [], loadedLastTime: Date.now(), loadedLastIndex: 0, }
 
 //urls of google results first 10 pages
-for (var i=0;p=document.querySelectorAll("#navcnt .fl")[i];i++){
+for (var i=0;p=document.querySelectorAll("#navcnt .fl")[i];i++)
       nextPages.urls.push(p.href)
-  
-    // p.onclick = function(){
-    //  location.href=this.href; //if no infinite scroll, require page reload instead of google's ajax swap
-    // }
-}
 
 
 
