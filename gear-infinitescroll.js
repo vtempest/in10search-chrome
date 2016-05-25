@@ -7,12 +7,12 @@ document.addEventListener("DOMContentLoaded", function(){
 for (var i=0;p=document.querySelectorAll("#navcnt .fl")[i];i++)
       nextPages.urls.push(p.href)
 
-
+//TODO if you instant - tpye a new query it still uses the old one's pages
 
 function ininiteScroll(){
 
 
-    if (window.enableInfiniteScroll && !window.enableInfiniteScroll.checked) {
+    if (window.enableInfiniteScroll && !window.enableInfiniteScroll.checked || !window.enableAutoload.checked) {
         $("#foot").style.display = "block";
          return;
     }

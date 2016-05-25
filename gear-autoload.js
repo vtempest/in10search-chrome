@@ -39,12 +39,7 @@ NodeList.prototype.forEach = Array.prototype.forEach;
 function xhr(url, cb){
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
-    xhr.onload = function() {
-      if (this.status >= 200 && this.status < 400) 
-        cb(xhr.responseText)
-      else 
-        console.log(xhr)
-    };
+    xhr.onload =  cb(xhr.responseText)
     xhr.onerror = function() {
         console.log(xhr)
     };
@@ -132,6 +127,7 @@ window.searchform.appendChild(window.ab_ctls)
 //#rez container for iframes, and takes up half the page fixed position
 var rez = document.createElement('div');
 rez.id = 'rez';
+rez.innerHTML = "<div class='loader'>Loading...</div>";
 document.body.appendChild(rez);
 
 function positionRez() {
@@ -163,7 +159,7 @@ $("body").addEventListener("mouseover", function(e) {
     if (window.enableHoverMode && !window.enableHoverMode.checked) return;
 
     for (var i in e.path)
-        if (e.path[i].className == "g") {
+        if (e.path[i].classList &&  Array.prototype.indexOf.call(e.path[i].classList,"g")>-1 ) {
             doMouseOver(e.path[i]);
 
             break;
@@ -173,7 +169,7 @@ $("body").addEventListener("mouseover", function(e) {
 
 $("body").addEventListener("click", function(e) {
     for (var i in e.path)
-        if (e.path[i].className == "g") {
+        if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList,"g")>-1 ) {
             doMouseOver(e.path[i]);
 
             break;
@@ -183,14 +179,14 @@ $("body").addEventListener("click", function(e) {
 $("body").addEventListener("mouseout", function(e) {
 
     for (var i in e.path)
-        if (e.path[i].className == "g") {
+        if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList,"g")>-1 ) {
             doMouseOut();
 
             break;
         }
 }, 0)
 
-
+//TODO youtube autoplay suprpression
 
 
 //clear intent-to-load timer if user leaves mouse from g in <300ms
@@ -233,7 +229,7 @@ function doMouseOver(g) {
 
 
 
-                var url = g.querySelector('h3 a').href;
+                var url = g.querySelector('h3 a,a').href;
 
                 var rez = document.querySelector("#rez");
                 if (!rez) return;
@@ -242,12 +238,14 @@ function doMouseOver(g) {
 
                 //use preloadId to check if rFrame already loaded then show it
 
-                if (preloadId = g.querySelector('h3 a').dataset.preload) {
+                if (preloadId = g.querySelector('h3 a,a').dataset.preload) {
 
-                    rez.querySelector("#" + preloadId).style.opacity = 0;
-                    rez.querySelector("#" + preloadId).className = 'show';
-                    onFrameShow()
-
+                    if (rez.querySelector("#" + preloadId)){
+                        rez.querySelector("#" + preloadId).style.opacity = 0;
+                    
+                        rez.querySelector("#" + preloadId).className = 'show';
+                        onFrameShow()
+                    }
 
                 } else { //create new iframe for target 
 
@@ -272,22 +270,31 @@ function doMouseOver(g) {
                 }; // end create new iframe
 
 
-
-            }, window.longDelayHover ? 700 : g.querySelector('h3 a').dataset.preload ? 300 : 350) //loadPageAfterDelayTimeout 
+                //TODO timeout for preloaded
+            }, window.longDelayHover ? 700 : g.querySelector('h3 a,a').dataset.preload ? 50 : 350) //loadPageAfterDelayTimeout 
 
 
 }
 
 
 function xhrFrame(url, preloadId, callback){
-        //get target page's html via a bypass cors xhr executed from background.j, inserting scrapped html into iframe
+    //TODO pdf.js
+
+   
+
+    //get target page's html via a bypass cors xhr executed from background.j, inserting scrapped html into iframe
     chrome.runtime.sendMessage({ action: 'xhr', url: url }, function(responseText) {
 
+        if (responseText && responseText.error)
+        console.log(responseText.error)
+
+    
+    
         var domain = (url.match(/(http:\/\/|https:\/\/)[^\/]+/gi) || [""])[0];
 
         //allow relative resource paths to load using the target's domain
-        responseText = responseText.replace(/<head[^>]*>/i, "<head><base href='" + domain + "/'>"+
-            "<style>.solar img{ -webkit-filter: invert(100%) !important; transition: 1.5s; }</style>");
+         responseText = responseText && responseText.replace(/<head[^>]*>/i, "<head><base href='" + domain + "/'>"+
+             "<style>.solar img{ -webkit-filter: invert(100%) !important; transition: 1.5s; }</style>");
 
         //error fallback: set iframe src to be served thru hkrnews.com proxy which spoofs headers
         //var targetUrl = (location.protocol=="https:"?"https:":"http:") + "//hkrnews.com/get?url=" + url;
@@ -295,8 +302,14 @@ function xhrFrame(url, preloadId, callback){
 
         //create a blank iframe with unique id 
         var rFrame = document.createElement('iframe');
-        rFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts');
+
+        if (!url.endsWith('pdf'))
+            rFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms');
+        
         rFrame.id = preloadId;
+        
+        
+
         rez.appendChild(rFrame);
         rFrame.addEventListener("load", function(e){
             console.log(e)
@@ -312,8 +325,16 @@ function xhrFrame(url, preloadId, callback){
         //  observer.observe(rFrame.contentDocument.querySelector("html"), { childList: true, subtree: true });
 
 
+        // if (url.endsWith('pdf'))
+        //     alert(responseText.length)
+
         //set blank iframe html to be the xhr html
-        rFrame.contentDocument.querySelector("html").innerHTML = responseText;
+        if (url.indexOf("youtube")>-1 || url.indexOf("google.com")>-1 || url.endsWith('pdf')  ) //|| !responseText)
+            rFrame.src=url;
+
+        else
+        
+           rFrame.contentDocument.querySelector("html").innerHTML = responseText;
 
         callback(rFrame)
 
@@ -330,27 +351,34 @@ function onFrameShow() {
     //TODO with timeout not always done
     // $("#rez .show").onload =function() {
 
-    $(".show").style.opacity = 1;
+    if ($(".show").style)
+        $(".show").style.opacity = 1;
 
 
-    //match solarize except images
+    //match solarize except images  
 
-	if (document.body.classList.contains("solar") )
-		$(".show").contentDocument.body.classList.add("solar");
-	 else 
-	 	$(".show").contentDocument.body.classList.remove("solar");
+    if( $(".show").contentDocument){
+
+    	if (document.body.classList.contains("solar") )
+    		$(".show").contentDocument.body.classList.add("solar");
+    	 else 
+    	 	$(".show").contentDocument.body.classList.remove("solar");
+    }
 
 
     //highlight on result page, the subtext from .g result, first phrase/sentence
     var g = document.querySelector('.current');
-    var queryTextNode = g.querySelectorAll(".st")[0].cloneNode(1);
-    if (queryTextNode.querySelector(".f"))
+    if (!g) return;
+
+    var queryTextNode = g.querySelectorAll(".st")[0] ? g.querySelectorAll(".st")[0].cloneNode(1) : false;
+    if (queryTextNode && queryTextNode.querySelector(".f"))
         queryTextNode.removeChild(queryTextNode.querySelector(".f"))
-    var queryText = queryTextNode.textContent.replace(/\.\.\.(.?)+/, '').trim();
+    var queryText = queryTextNode? queryTextNode.textContent.replace(/\.\.\.(.?)+/, '').trim() : false;
 
 
     //execute commands in the window context of iframe
     var rWindow = $("#rez .show").contentWindow;
+    if (!rWindow) return;
 
 
     if (rWindow.getSelection().rangeCount) rWindow.getSelection().collapseToStart();
@@ -365,6 +393,16 @@ function onFrameShow() {
             var found = rWindow.find(queryBoldWord.textContent, 0, 0, 0, 0, 1, 1);
     }
 
+    //scroll to position selection to middle
+    if(!$(".show").contentWindow.getSelection().isCollapsed){
+        //position highlighted to top
+        $(".show").contentWindow.getSelection().anchorNode.parentNode.scrollIntoView(1);
+        
+        //position highlighted to middle
+        $(".show").contentWindow.document.body.scrollTop-=$(".show").contentWindow.innerHeight/2-30
+
+    }
+
     if (found && window.enablePulsateQuery.checked) {
     	
         var throbTimesToPulsate = 2;
@@ -372,7 +410,7 @@ function onFrameShow() {
 
         function throb() {
             var selNode = rWindow.getSelection().anchorNode.parentNode;
-            selNode.style.backgroundColor = "yellow";
+            selNode.style.backgroundColor = "#a2c2fa";
 
             setTimeout(function() {
 
@@ -403,6 +441,79 @@ function onFrameShow() {
 
 
 }; //end onFrameShow
+
+
+
+
+
+
+
+
+//IFRAME resizable
+window.dragSidebar = false;
+ires.addEventListener('mousemove',function(e){
+  if(this.clientWidth - e.offsetX < 10)
+      $("body").style['cursor']='e-resize';
+  else if(!dragSidebar)
+       $("body").style['cursor']='';
+},1)
+
+ires.addEventListener('mouseout',function(e){
+    if(!dragSidebar)
+        $("body").style['cursor']='';
+},1)
+
+ires.addEventListener('mousedown',function(e){
+  var start = e.offsetX;
+  if(ires.clientWidth - start > 20)
+    return;
+
+
+  dragSidebar = true;
+
+  document.body.addEventListener('mousemove',function(e){
+     e.preventDefault();
+  },1)
+  window.addEventListener('mouseup',function(e){
+
+        console.log(e.pageX)
+    $("body").removeEventListener('mousemove',1);
+
+    $("body").removeEventListener('mouseup',1);
+
+    if (dragSidebar){
+
+        dragSidebar = false;
+        
+        $("#ires").style['max-width']=e.pageX+'px';
+        positionRez()
+    }
+  },1)
+
+
+   $("#rez .show").contentWindow.addEventListener('mouseup',function(e){
+
+        console.log(e.pageX)
+    $("#rez .show").contentWindow.removeEventListener('mousemove',1);
+
+    $("#rez .show").contentWindow.removeEventListener('mouseup',1);
+
+    if (dragSidebar){
+
+        dragSidebar = false;
+        
+        $("#ires").style['max-width']=e.pageX+ $("#rez .show").getBoundingClientRect().left +  'px';
+        positionRez()
+    }
+  },1)
+  
+
+
+},1);
+
+
+
+
 
 
 
@@ -455,7 +566,7 @@ function keyDownHandler(e) {
 
         window.disablejs = !window.disablejs;
 
-        rez.setAttribute('sandbox', "allow-same-origin" + (disablejs ? "" : " allow-scripts"));
+     //   rez.setAttribute('sandbox', "allow-same-origin" + (disablejs ? "" : " allow-scripts"));
 
     }
 
@@ -489,20 +600,27 @@ setTimeout(function(){
     for(var i=1;i<4;i++){
 
         //set preloadid token into .g link for later recall                 
-        gs[i].querySelectorAll('a')[0].dataset.preload = preloadId = "i" + ($("#rez").childNodes.length-1+i);
-        var url = gs[i].querySelector('h3 a').href;
+        var url = gs[i].querySelector('h3 a,a').href;
+
+        if (url.indexOf('youtube.com')==-1){
+
+             gs[i].querySelectorAll('a')[0].dataset.preload = preloadId = "i" + ($("#rez").childNodes.length-1+i);
+       
 
 
-        xhrFrame(url, preloadId, function(rFrame){
+            xhrFrame(url, preloadId, function(rFrame){
 
-           // rFrame.style.opacity = 0;
-           // rFrame.style.visibility="visible";
+               // rFrame.style.opacity = 0;
+               // rFrame.style.visibility="visible";
 
 
-            //apply scripts to target frame, useful in pre-cache for scroll position
-            onFrameShow();
+                //apply scripts to target frame, useful in pre-cache for scroll position
+                onFrameShow();
 
-        })
+            })
+
+
+        }
 
 
 

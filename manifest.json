@@ -4,13 +4,14 @@
 	"version": "1.5",
 	"permissions": [
         "*://*.google.com/search?*q=*",
-        "http://*/", "https://*/",
+        "*://*/*",
+        "webRequest", "webRequestBlocking", 
         "webNavigation",
         "storage" 
     ],
     "content_scripts": [
         {
-            "matches": [ "*://*.google.com/search?*q=*" ,"file:///*", ,"file://*"],
+            "matches": [ "*://*.google.com/search?*q=*"],
             "js": ["gear-autoload.js", "gear-infinitescroll.js"],
             "css": ["gear-ui.css", "uiToggle.css"],
             "run_at": "document_start",
@@ -19,7 +20,7 @@
     ],
     "background": {
         "scripts": ["background.js"],
-        "persistent": false
+        "persistent": true
     },
 
 	"icons": {
