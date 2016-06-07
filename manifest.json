@@ -1,34 +1,70 @@
 {
-	"name": "Search GEAR",
-	"description": "Search google with enhanced auto-loading results",
-	"version": "1.5",
-	"permissions": [
-        "*://*.google.com/search?*q=*",
+    "name": "in10search",
+    "description": "OREO: online research enhanced on-demand • GEAR: search Google with enhanced auto-loading results • SWAG: swipe webcam arm gestures • FAST: find across-all searched tabs",
+    "version": "2.0.0",
+    "manifest_version": 2,
+    "author": "Alex Gulakov",
+    "permissions": [
         "*://*/*",
-        "webRequest", "webRequestBlocking", 
-        "webNavigation",
-        "storage" 
+        "webRequest", "webRequestBlocking", "webNavigation",
+        "storage", "contextMenus", "tabs"
     ],
-    "content_scripts": [
-        {
-            "matches": [ "*://*.google.com/search?*q=*"],
-            "js": ["gear-autoload.js", "gear-infinitescroll.js"],
-            "css": ["gear-ui.css", "uiToggle.css"],
+    "content_scripts": [{
+            "matches": ["*://*.google.com/*"],
+            "js": ["gear/pageinit.js", "gear/swag.js", "gear/navigate.js",
+                "gear/autoload.js", "gear/infinitescroll.js"
+            ],
+            "css": ["css/gear-style.css", "css/gear-restylegoogle.css", "css/uiToggle.css", "css/uiLoader.css"],
             "run_at": "document_start",
             "all_frames": true
+        },
+        {
+            "matches": ["<all_urls>"],
+            "js": ["chromeapi/globalkeys.js"]
         }
     ],
     "background": {
-        "scripts": ["background.js"],
+        "scripts": ["chromeapi/api-xhr.js", "chromeapi/api-alltabfind.js"],
         "persistent": true
     },
 
-	"icons": {
-		"64": "icon.png"
-	},
+    "icons": {
+        "64": "config/in10-icon64.png"
+    },
     "options_ui": {
-        "page": "options.html",
+        "page": "config/options.html",
         "chrome_style": true
-      },
-	"manifest_version": 2
+    },
+
+    "browser_action": {
+        "default_icon": {
+            "38": "config/in10-icon-small.png"
+        },
+        "default_popup": "alltabfind/alltabfind-popup.html",
+        "default_title": "Find Across All Tabs"
+    },
+
+    "commands": {
+        "keyboard-alltabfind": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+1"
+            },
+            "description": "Google Voice Search",
+            "global": true
+        },
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+F"
+            }
+        }
+    },
+
+    "web_accessible_resources": [
+        "gear/*", "config/*"
+    ]
 }
+
+
+
+
+

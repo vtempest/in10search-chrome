@@ -1,3 +1,4 @@
+localStorage['alex']=24
 
 window.addConfig = function(id, label, checked) {
 	

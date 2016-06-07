@@ -1,0 +1,68 @@
+
+
+
+/* restyle google default page */
+
+html:not(.disableAutoloadApp) #center_col,
+html:not(.disableAutoloadApp) #res {
+    margin-left: 0 !important;
+    padding-left: 0;
+} 
+html:not(.disableAutoloadApp) .g {
+    margin-bottom: 15px;
+    padding-left: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+html:not(.disableAutoloadApp) .hdtb-mitem.hdtb-imb {
+    margin-left: 15px !important;
+}
+
+html:not(.disableAutoloadApp) #footcnt,
+html:not(.disableAutoloadApp) .rgsep,
+html:not(.disableAutoloadApp) #extrares,
+html:not(.disableAutoloadApp) #foot {
+    display: none;
+}
+
+html:not(.disableAutoloadApp) #hdtbSum {
+    border: 0 !important;
+}
+
+html:not(.disableAutoloadApp) #slim_appbar {
+    margin-left: 0px !important;
+}
+
+/* shrink searchbox */
+
+html:not(.disableAutoloadApp) #tsf{
+    max-width: 33% !important;
+}
+html:not(.disableAutoloadApp) .sfibbbc{
+    max-width: 100% !important;
+}
+
+/* google search topbar fixed */
+
+html:not(.disableAutoloadApp) #searchform {
+    /*position: fixed !important;*/
+}
+
+html:not(.disableAutoloadApp) #gbw>div>div {
+    /*position: fixed;*/
+    right: 0px;
+}
+
+html:not(.disableAutoloadApp) #ab_ctls {
+ /*       right: 0px;
+    top: -29px;*/
+}
+
+
+html:not(.disableAutoloadApp) { 
+  opacity: 0; 
+  transition: .5s;
+}
+

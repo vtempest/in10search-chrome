@@ -37,7 +37,11 @@ function ininiteScroll(){
                   
 
                   //append next 10 results to these 10
-                  document.querySelector("#ires").appendChild(  nextPageDOM.querySelector("#ires")  )
+                  var nextGs = nextPageDOM.querySelectorAll("#ires .g");
+                  var gContainer =  document.querySelector(".g").parentNode;
+
+                  for(var g in nextGs)
+                    gContainer.appendChild(  nextGs[g]  )
 
 
 
@@ -68,12 +72,12 @@ function ininiteScroll(){
 
 
 
-}
+  }
 
 
 
-window.addEventListener("scroll", ininiteScroll, 1)
-window.addEventListener("mousewheel", ininiteScroll, 1) //diff is fires even if scrolling over bottom:0
+  window.addEventListener("scroll", ininiteScroll, 1)
+  window.addEventListener("mousewheel", ininiteScroll, 1) //diff is fires even if scrolling over bottom:0
 
 
 })

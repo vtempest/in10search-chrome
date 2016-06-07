@@ -4,8 +4,7 @@ function $(s){
 
   this._s=s; //privatize selector string for later methods
   _e = document.querySelectorAll(s);
-  this=_e;
-  this._e = _e ;
+  this= this._e = _e ;
 
 }
 
@@ -21,7 +20,7 @@ $.prototype.each = function(fn){
   console.log(this); //list of matched elems
 
   for (i=0;el=this[i++];)    
-    fn.call(this) 
+    fn.call(el) 
 
 }
 
