@@ -1,26 +1,24 @@
 setTimeout(function() {
 
-    if (!document.querySelector("article")) return;
+  
+    // swag.start();
 
-     document.querySelector("article").innerHTML = ''
-    swag.start();
-
-    swag.onRight = function() {
-        document.querySelector('#dir').innerHTML = "right ===>>>>>";
-        clearTimeout(window.xc)
-        window.xc = setTimeout(function() { document.querySelector('#dir').innerHTML = "" }, 1500)
+    // swag.onRight = function() {
+    //     document.querySelector('#dir').innerHTML = "right ===>>>>>";
+    //     clearTimeout(window.xc)
+    //     window.xc = setTimeout(function() { document.querySelector('#dir').innerHTML = "" }, 1500)
 
 
-    }
+    // }
 
-    swag.onLeft = function() {
+    // swag.onLeft = function() {
 
-        document.querySelector('#dir').innerHTML = " <<<<===== left"
-        clearTimeout(window.xc)
-        window.xc = setTimeout(function() { document.querySelector('#dir').innerHTML = "" }, 1500)
+    //     document.querySelector('#dir').innerHTML = " <<<<===== left"
+    //     clearTimeout(window.xc)
+    //     window.xc = setTimeout(function() { document.querySelector('#dir').innerHTML = "" }, 1500)
 
 
-    }
+    // }
 
 
 }, 500)

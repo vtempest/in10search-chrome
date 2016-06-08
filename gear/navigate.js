@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     setTimeout(function(){
 
+        if(!window.enableSwag.checked) return;
+
 
         swag.start().onRight = navNext
 

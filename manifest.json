@@ -3,7 +3,7 @@
     "description": "OREO: online research enhanced on-demand • GEAR: search Google with enhanced auto-loading results • SWAG: swipe webcam arm gestures • FAST: find across-all searched tabs",
     "version": "2.0.0",
     "manifest_version": 2,
-    "author": "Alex Gulakov",
+    "author": "Alex Gulakov, CC SA-BY 3.0",
     "permissions": [
         "*://*/*",
         "webRequest", "webRequestBlocking", "webNavigation",
@@ -24,7 +24,7 @@
         }
     ],
     "background": {
-        "scripts": ["chromeapi/api-xhr.js", "chromeapi/api-alltabfind.js"],
+        "scripts": ["chromeapi/api-xhr.js", "chromeapi/api-alltabfind.js", "chromeapi/googlevoice.js"],
         "persistent": true
     },
 
@@ -63,8 +63,3 @@
         "gear/*", "config/*"
     ]
 }
-
-
-
-
-
