@@ -1,55 +1,52 @@
-
-
 document.addEventListener("DOMContentLoaded", function() {
 
-    //only on specific pages of web results
-    if (!$(".hdtb-msel") || !$(".hdtb-msel").textContent || 
-        ["All", "Videos", "News", "Shopping", "News", "Books"].indexOf($(".hdtb-msel").textContent) == -1){
-        document.querySelector('html').classList.add("disableAutoloadApp");
-        return
+        //only on specific pages of web results
+        if (!$(".hdtb-msel") || !$(".hdtb-msel").textContent || ["All", "Videos", "News", "Shopping", "News", "Books"].indexOf($(".hdtb-msel").textContent) == -1) {
+            document.querySelector('html').classList.add("disableAutoloadApp");
+            return
 
-    }
-
+        }
 
 
-    //listen to mouse over on container of .g then detect if on .g,
-    //to avoid having to bind listeners to new .g when those get added
 
-    $("body").addEventListener("mouseover", function(e) {
+        //listen to mouse over on container of .g then detect if on .g,
+        //to avoid having to bind listeners to new .g when those get added
 
-        //if no-hover mode
-        if (window.enableHoverMode && !window.enableHoverMode.checked) return;
+        $("#ires").addEventListener("mouseover", function(e) {
 
-        for (var i in e.path)
-            if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList, "g") > -1) {
-                doMouseOver(e.path[i]);
+            //if no-hover mode
+            if (window.enableHoverMode && !window.enableHoverMode.checked) return;
 
-                break;
-            }
+            for (var i in e.path)
+                if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList, "g") > -1) {
+                    doMouseOver(e.path[i]);
 
-    }, 0)
+                    break;
+                }
 
-    $("body").addEventListener("click", function(e) {
-        for (var i in e.path)
-            if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList, "g") > -1) {
-                doMouseOver(e.path[i]);
+        }, 0)
 
-                break;
-            }
-    }, 0)
+        $("#ires").addEventListener("click", function(e) {
+            for (var i in e.path)
+                if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList, "g") > -1) {
+                    doMouseOver(e.path[i]);
 
-    $("body").addEventListener("mouseout", function(e) {
+                    break;
+                }
+        }, 0)
 
-        for (var i in e.path)
-            if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList, "g") > -1) {
-                doMouseOut();
+        $("#ires").addEventListener("mouseout", function(e) {
 
-                break;
-            }
-    }, 0)
+            for (var i in e.path)
+                if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList, "g") > -1) {
+                    doMouseOut();
+
+                    break;
+                }
+        }, 0)
 
 
-}) //end dom loaded
+    }) //end dom loaded
 
 
 
@@ -197,7 +194,8 @@ function xhrFrame(url, preloadId, callback) {
         //     alert(responseText.length)
 
         //set blank iframe html to be the xhr html
-        if (url.indexOf("youtube") > -1 || (url.indexOf("google.com") > -1 && url.indexOf("chrome.google.com") == -1 ) || url.endsWith('pdf')) //|| !responseText)
+        if (url.indexOf("youtube") > -1 || (url.indexOf("www.google.com") > -1 && url.indexOf("chrome.google.com") == -1) 
+            || url.endsWith('pdf')) //|| !responseText)
             rFrame.src = url;
 
         else
@@ -209,7 +207,7 @@ function xhrFrame(url, preloadId, callback) {
         //NO ERRORS
         //console.clear();
 
-        callback(rFrame)    
+        callback(rFrame)
 
 
 
@@ -287,8 +285,8 @@ function onFrameShow() {
     // debugger
 
     //
-   // rWindow.document.body.innerHTML = rWindow.document.body.innerHTML
-     //   .replace(new RegExp("" + q2 + "", "gi"), "<span style='background:yellow'>$1</span>")
+    // rWindow.document.body.innerHTML = rWindow.document.body.innerHTML
+    //   .replace(new RegExp("" + q2 + "", "gi"), "<span style='background:yellow'>$1</span>")
 
 
 
@@ -333,5 +331,3 @@ function onFrameShow() {
 
 
 }; //end onFrameShow
-
-

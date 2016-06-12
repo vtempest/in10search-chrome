@@ -5,6 +5,7 @@ setTimeout(function() {
 }, 100)
 
 //pull settings from account sync
+if (chrome.storage.sync)
 chrome.storage.sync.get({
     enableAutoload: 1,
     enableHoverMode: 1,
@@ -130,8 +131,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if(window.enableSwag.checked) {
             swag.start().onRight = navNext;
-
-            swag.start().onLeft = navPrior;
+            // swag.start().onLeft = navPrior;
         } else {
             swag.stop();
         }
@@ -174,6 +174,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         var rezWidth = document.body.clientWidth - $(".g")[0].clientWidth;
         var rezTop = Math.max(0, $(".sfbg.nojsv").getBoundingClientRect().bottom + 1);
+        if (document.body.scrollTop>rezTop)
+            rezTop=0
 
 
         rez.style.width = rezWidth + "px";
@@ -185,6 +187,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // during scrolling, make the intentional lag of mouse hover slightly longer
         window.longDelayHover = true;
+
+
+        // show or "hide unless hovered" the topbar
+        searchform.className = document.body.scrollTop>60 ? "fixed" : "";
 
     };
 
@@ -262,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     //load first result link in iframe
     setTimeout(function() {
-        document.querySelectorAll(".g")[0].dispatchEvent(new Event('click', { 'bubbles': true }));
+        document.querySelectorAll(".srg .g")[0].dispatchEvent(new Event('click', { 'bubbles': true }));
     }, 500)
 
 
@@ -272,12 +278,12 @@ document.addEventListener("DOMContentLoaded", function() {
         return; //off
 
 
-        var gs = $(".g");
+        var gs = $(".srg .g");
 
         for (var i = 1; i < 4; i++) {
 
             //set preloadid token into .g link for later recall
-            var url = gs[i].querySelector('h3 a,a').href;
+            var url = gs[i].querySelector('h3 a, a').href;
 
             if (url.indexOf('youtube.com') == -1) {
 

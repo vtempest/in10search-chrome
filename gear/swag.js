@@ -141,10 +141,10 @@ swag.process = function() {
         } else {
 
             //otherwise keep it the same color
-            // delt.data[pix] = currentFrame.data[pix];
-            // delt.data[pix + 1] = currentFrame.data[pix + 1];
-            // delt.data[pix + 2] = currentFrame.data[pix + 2];
-            // delt.data[pix + 3] = currentFrame.data[pix + 3]; //change to 0 to hide user video
+            delt.data[pix] = currentFrame.data[pix];
+            delt.data[pix + 1] = currentFrame.data[pix + 1];
+            delt.data[pix + 2] = currentFrame.data[pix + 2];
+            delt.data[pix + 3] = currentFrame.data[pix + 3]; //change to 0 to hide user video
         }
     }
 

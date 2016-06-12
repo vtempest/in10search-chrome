@@ -15,7 +15,8 @@ document.addEventListener("DOMContentLoaded", function() {
         if(!window.enableSwag.checked) return;
 
 
-        swag.start().onRight = navNext
+        swag.start().onRight = navNext;
+        // swag.start().onLeft = navPrior; 
 
 
     }, 500)    

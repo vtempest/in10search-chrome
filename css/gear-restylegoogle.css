@@ -47,11 +47,18 @@ html:not(.disableAutoloadApp) .sfibbbc{
 /* google search topbar fixed */
 
 html:not(.disableAutoloadApp) #searchform {
-    /*position: fixed !important;*/
+    position: fixed !important;
 }
 
+#searchform.fixed:not(:hover), 
+#searchform.fixed:not(:hover) * {
+    visibility: hidden;
+    background: none;
+}
+
+
 html:not(.disableAutoloadApp) #gbw>div>div {
-    /*position: fixed;*/
+    position: fixed;
     right: 0px;
 }
 
@@ -62,7 +69,7 @@ html:not(.disableAutoloadApp) #ab_ctls {
 
 
 html:not(.disableAutoloadApp) { 
-  opacity: 0; 
-  transition: .5s;
+  /*opacity: 0; */
+  /*transition: .5s;*/
 }
 

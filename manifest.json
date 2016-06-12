@@ -45,7 +45,7 @@
     },
 
     "commands": {
-        "keyboard-alltabfind": {
+        "key-voicesearch": {
             "suggested_key": {
                 "default": "Ctrl+Shift+1"
             },
@@ -62,4 +62,10 @@
     "web_accessible_resources": [
         "gear/*", "config/*"
     ]
+
+    ,"applications": {
+      "gecko": {
+      "id": "in10search@mozilla.org",
+      "strict_min_version": "46.0"
+    }}
 }
