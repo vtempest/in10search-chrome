@@ -1,5 +1,20 @@
-//HERE BE DRAGONS!
+/*     HERE BE DRAGONS!
 
+             |\___/|
+            (,\  /,)\
+            /     /  \
+           (@_^_@)/   \
+            W//W_/     \
+          (//) |        \
+        (/ /) _|_ /   )  \
+      (// /) '/,_ _ _/  (~^-.
+    (( // )) ,-{        _    `.
+   (( /// ))  '/\      /      |
+   (( ///))     `.   {       }
+    ((/ ))    .----~-.\   \-'
+             ///.----..>   \
+              ///-._ _  _ _}
+*/
 //toodo when from google clicked on new page new tab
 
 chrome.runtime.onInstalled.addListener(function (eventInstall) {
