@@ -1,30 +1,32 @@
 {
     "name": "in10search",
-    "description": "OREO: online research enhanced on-demand • GEAR: search Google with enhanced auto-loading results • SWAG: swipe webcam arm gestures • FAST: find across-all searched tabs",
+    "description": "Search GEAR: Google with enhanced auto-loading results • SWAG: swipe webcam arm gestures • OREO: on-demand reading-mode editable overlay • CATS: Ctrl+F across-all tabs search",
     "version": "2.0.0",
     "manifest_version": 2,
     "author": "Alex Gulakov, CC SA-BY 3.0",
     "permissions": [
         "*://*/*",
         "webRequest", "webRequestBlocking", "webNavigation",
-        "storage", "contextMenus", "tabs"
+        "storage", "contextMenus", "tabs", "tts"
     ],
     "content_scripts": [{
             "matches": ["*://*.google.com/*"],
-            "js": ["gear/pageinit.js", "gear/swag.js", "gear/navigate.js",
+            "js": ["gear/pageinit.js", "gear/navigate.js",
                 "gear/autoload.js", "gear/infinitescroll.js"
             ],
-            "css": ["css/gear-style.css", "css/gear-restylegoogle.css", "css/uiToggle.css", "css/uiLoader.css"],
+            "css": ["css/gear-style.css", "css/gear-restylegoogle.css", 
+                "css/uiToggle.css", "css/uiLoader.css"],
             "run_at": "document_start",
             "all_frames": true
         },
         {
             "matches": ["<all_urls>"],
-            "js": ["chromeapi/globalkeys.js"]
+            "js": ["chrome/globalcontent.js"]
         }
     ],
     "background": {
-        "scripts": ["chromeapi/api-xhr.js", "chromeapi/api-alltabfind.js", "chromeapi/googlevoice.js"],
+        "scripts": [  "oreo/readingmode.js",  "swag/swag.js",  
+            "chrome/api.js","chrome/api-xhr.js","chrome/googlevoice.js"],
         "persistent": true
     },
 
@@ -40,8 +42,8 @@
         "default_icon": {
             "38": "config/in10-icon-small.png"
         },
-        "default_popup": "alltabfind/alltabfind-popup.html",
-        "default_title": "Find Across All Tabs"
+        "default_popup": "cats/alltabfind-popup.html",
+        "default_title": "Ctrl+F Across-all Tabs Search"
     },
 
     "commands": {
@@ -61,9 +63,9 @@
 
     "web_accessible_resources": [
         "gear/*", "config/*"
-    ]
+    ],
 
-    ,"applications": {
+    "applications": {
       "gecko": {
       "id": "in10search@mozilla.org",
       "strict_min_version": "46.0"

@@ -16,6 +16,13 @@ html:not(.disableAutoloadApp) .g {
     border-radius: 5px;
 }
 
+
+
+} 
+html:not(.disableAutoloadApp) body:not(.resizing) .g {
+    cursor: pointer;
+}
+
 html:not(.disableAutoloadApp) .hdtb-mitem.hdtb-imb {
     margin-left: 15px !important;
 }

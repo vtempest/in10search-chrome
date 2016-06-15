@@ -4,6 +4,14 @@ function onKeyDown(e) {
 
     //tab = search text shortcut
     if (e.keyCode == 9 && !e.altKey && !e.ctrlKey  ){
+
+
+
+
+
+
+
+        /*
         //quit if pressing tab in input box
         var i = e.target;
         if (i instanceof HTMLImageElement || i instanceof HTMLInputElement || i instanceof HTMLTextAreaElement || i.textbox ||
@@ -23,5 +31,8 @@ function onKeyDown(e) {
             if (document.location.host.match(/google/gi) && document.getElementsByClassName("g").length>0)
                 document.location = document.getElementsByClassName("r")[0].getElementsByTagName("a")[0].href;
         }
+
+        */
     }
 }
+

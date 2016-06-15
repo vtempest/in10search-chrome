@@ -1,4 +1,3 @@
-//swipe webcam armgesture
 
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -15,8 +14,13 @@ document.addEventListener("DOMContentLoaded", function() {
         if(!window.enableSwag.checked) return;
 
 
-        swag.start().onRight = navNext;
+        swag.start().onRight = function(){
+            clearTimeout(window.swagTimeout)
+
+            window.swagTimeout = setTimeout(navNext, 2500)
         // swag.start().onLeft = navPrior; 
+
+         }
 
 
     }, 500)    
@@ -78,7 +82,25 @@ function keyDownHandler(e) {
 
     if (key == 13 ) { //should window lose focus?
 
-        window.open(document.querySelector(".current a").href, "_blank");
+
+
+
+
+            var loc = document.location;
+            var uri = {
+              spec: loc.href,
+              host: loc.host,
+              prePath: loc.protocol + "//" + loc.host,
+              scheme: loc.protocol.substr(0, loc.protocol.indexOf(":")),
+              pathBase: loc.protocol + "//" + loc.host + loc.pathname.substr(0, loc.pathname.lastIndexOf("/") + 1)
+            };
+            var article = new Readability(uri, document).parse();
+
+            console.log(article)
+
+
+
+      //  window.open(document.querySelector(".current a").href, "_blank");
     }
 
 }

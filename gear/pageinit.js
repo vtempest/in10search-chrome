@@ -14,24 +14,26 @@ chrome.storage.sync.get({
     enableSolarizedColor: 0,
     enableSwag: 0
 }, function(options) {
-    console.log(options)
-    localStorage = options;
+    for (var i in options)
+        localStorage[i] = options[i];
 
 
     //before dom content loaded, to reduce twitch
     if (localStorage['enableAutoload'] != "true") {
         document.querySelector('html').classList.add("disableAutoloadApp"); //remove the css restylings
+    } else{
+
+
+
+
+       
+
+
+
+
     }
 
 });
-
-//force http to avoid mixed content CSP block of http iframes on https google
-//  if (location.protocol == "https:" && localStorage['enableAutoload']=="true")
-//      location.href = location.href.replace("https", "http") + "&gws_rd=ssl";
-
-
-
-
 
 
 //util$
@@ -56,6 +58,7 @@ function xhr(url, cb) {
 }
 
 
+
 document.addEventListener("DOMContentLoaded", function() {
 
 
@@ -65,10 +68,17 @@ document.addEventListener("DOMContentLoaded", function() {
         return
 
     }
-    // alert($(".hdtb-msel").length)
+         try{
+               
+        //force http to avoid mixed content CSP block of http iframes on https google
+         if (location.protocol == "https:" && typeof window.localStorage !== 'undefined' && localStorage['enableAutoload']=="true")
+             location.href = location.href.replace("https", "http") + "&gws_rd=ssl";
+        } catch(e){ 
+            window.enablein10 = false;
+        }
+
+            // alert($(".hdtb-msel").length)
     // return;
-
-
 
 
     //SETTINGS
@@ -101,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
             //reinit settings to apply on load, except reload functions
-            if (id != "enableAutoload" && window[id])
+            if (window[id] && id != "enableAutoload" )
                 window[id].dispatchEvent(new Event('change'));
 
         }, 1)
@@ -130,10 +140,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
         if(window.enableSwag.checked) {
-            swag.start().onRight = navNext;
-            // swag.start().onLeft = navPrior;
+            
+
+            chrome.runtime.sendMessage({ action: "swag"}, function(){})
+
         } else {
-            swag.stop();
+            chrome.runtime.sendMessage({ action: "swag-stop"}, function(){})
         }
 
     })
@@ -166,8 +178,41 @@ document.addEventListener("DOMContentLoaded", function() {
     //#rez container for iframes, and takes up half the page fixed position
     var rez = document.createElement('section');
     rez.id = 'rez';
-    rez.innerHTML = "<div class='loader'></div>";
+
+    var dashSearch = "<nav id='dashSearch'><div id='btnRead'></div><div id='btnTab'></div>"+
+            "<div id='btnBack'></div><div id='btnFind'></div></nav>"
+
+    rez.innerHTML = "<div class='loader'></div>"+dashSearch;
     document.body.insertBefore(rez, document.body.firstChild);
+
+    //dash search
+    btnRead.addEventListener("click", function(){
+
+
+
+    },1)
+
+    btnTab.addEventListener("click", function(){
+         
+         window.open(document.querySelector(".current a").href, "_blank");
+
+    },1)
+
+    btnBack.addEventListener("click", function(){
+
+        $("#rez .show").contentWindow.history.back();
+
+    },1)
+
+    btnFind.addEventListener("click", function(){
+
+
+       $("#rez .show").contentWindow.find();
+
+    },0)
+
+
+
 
     function positionRez() {
         if (!window.rez || !window.settings || !$(".g")[0]) return;
@@ -204,21 +249,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
     //IFRAME resizable
     window.dragSidebar = false;
-    ires.addEventListener('mousemove', function(e) {
-        if (this.clientWidth - e.offsetX < 10)
-            $("body").style['cursor'] = 'e-resize';
+    $("#rcnt").addEventListener('mousemove', function(e) {
+
+        if (ires.getBoundingClientRect().right < e.offsetX)
+            $("body").classList.add('resizing');
         else if (!dragSidebar)
-            $("body").style['cursor'] = '';
+            $("body").classList.remove('resizing');
     }, 1)
 
-    ires.addEventListener('mouseout', function(e) {
+    $("#rcnt").addEventListener('mouseout', function(e) {
         if (!dragSidebar)
-            $("body").style['cursor'] = '';
+            $("body").classList.remove('resizing');
     }, 1)
 
-    ires.addEventListener('mousedown', function(e) {
+    $("#rcnt").addEventListener('mousedown', function(e) {
         var start = e.offsetX;
-        if (ires.clientWidth - start > 20)
+
+        if( ires.getBoundingClientRect().right > e.offsetX )
             return;
 
 
@@ -267,9 +314,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     //load first result link in iframe
-    setTimeout(function() {
+    window.firstLink = setInterval(function() {
+        if (document.querySelectorAll(".srg .g")[0])
+            clearInterval(window.firstLink);
+
         document.querySelectorAll(".srg .g")[0].dispatchEvent(new Event('click', { 'bubbles': true }));
-    }, 500)
+    }, 200)
 
 
     //preload frames for background cache

@@ -12,12 +12,7 @@ chrome.commands.onCommand.addListener(function(command) {
 
         chrome.tabs.executeScript(googleTab.id, {
             runAt: "document_end",
-            code: 'window.clickVoice = setInterval(function(){' +
-                ' if (document.querySelector(".gsst_a")) {' +
-                'document.querySelector(".gsst_a").dispatchEvent(new Event("click", {bubbles: true}));' +
-                'clearInterval(window.clickVoice);' +
-                'document.title = "LISTENING"; ' +
-                '}},500);'
+            file:  "chrome/googlevoice-content.js"
         });
 
     });

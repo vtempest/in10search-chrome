@@ -1,35 +1,9 @@
-setTimeout(function() {
-
-  
-    // swag.start();
-
-    // swag.onRight = function() {
-    //     document.querySelector('#dir').innerHTML = "right ===>>>>>";
-    //     clearTimeout(window.xc)
-    //     window.xc = setTimeout(function() { document.querySelector('#dir').innerHTML = "" }, 1500)
-
-
-    // }
-
-    // swag.onLeft = function() {
-
-    //     document.querySelector('#dir').innerHTML = " <<<<===== left"
-    //     clearTimeout(window.xc)
-    //     window.xc = setTimeout(function() { document.querySelector('#dir').innerHTML = "" }, 1500)
-
-
-    // }
-
-
-}, 500)
-
-
 
 var swag = {
 	visible: 0, //debugger show the motion cam on page
-    sensitivity: 50, //value from 0 to 100% sensitive
+    sensitivity: 40, //value from 0 to 100% sensitive
     filteredTotal: 0, //number of changed pixel after filtering
-    minTotalChange: 300, //300	//minimum total number of pixels that need to change, before we decide that a gesture is happening
+    minTotalChange: 400, //300	//minimum total number of pixels that need to change, before we decide that a gesture is happening
     minDirChange: 6, //minimum number of pixels that need to change to assert a directional change
     state: 0, //States: 0 waiting for gesture, 1 waiting for next move after gesture, 2 waiting for gesture to end
 
