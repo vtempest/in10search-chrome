@@ -14,20 +14,20 @@
             "js": ["gear/pageinit.js", "gear/navigate.js",
                 "gear/autoload.js", "gear/infinitescroll.js"
             ],
-            "css": ["css/gear-style.css", "css/gear-restylegoogle.css", 
-                "css/uiToggle.css", "css/uiLoader.css"],
+            "css": ["gear/css/gear-style.css", "gear/css/gear-restylegoogle.css", 
+                "gear/css/uiToggle.css", "gear/css/uiLoader.css"],
             "run_at": "document_start",
             "all_frames": true
         },
         {
             "matches": ["<all_urls>"],
-            "js": ["chrome/globalcontent.js"],
+            "js": ["config/globalcontent.js"],
             "all_frames": true
         }
     ],
     "background": {
-        "scripts": [  "read/readingmode.js",  "word/word-api.js",   "swag/swag.js",  
-            "chrome/api.js","chrome/api-xhr.js","chrome/googlevoice.js"],
+        "scripts": [  "read/readingmode.js",  "word/word-api.js",   "swag/swag.js",   "swag/swag-api.js",  
+            "config/api-install.js","gear/api-xhr.js","vast/googlevoice.js"],
         "persistent": true
     },
 

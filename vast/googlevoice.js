@@ -12,7 +12,7 @@ chrome.commands.onCommand.addListener(function(command) {
 
         chrome.tabs.executeScript(googleTab.id, {
             runAt: "document_end",
-            file:  "chrome/googlevoice-content.js"
+            file:  "vast/googlevoice-content.js"
         });
 
     });

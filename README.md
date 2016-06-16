@@ -1,6 +1,6 @@
 
 ###in10search
-####Search GEAR: Google with enhanced auto-loading result
+####GEAR: Google with enhanced auto-loading results
 
 Enhance Google web results page, so that on mouseover of the result link, load the target page on the right half in an iframe
 
@@ -20,6 +20,4 @@ Enhance Google web results page, so that on mouseover of the result link, load t
 ####CATS: Ctrl+F across-all tabs search
 
 
-####MISC
-
-Google Voice Search
+####VAST: Voice Activated Search Terms

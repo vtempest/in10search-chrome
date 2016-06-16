@@ -1,20 +1,3 @@
-//toodo when from google clicked on new page new tab
-
-chrome.runtime.onInstalled.addListener(function(eventInstall) {
-    if (eventInstall.reason == "install")
-        chrome.tabs.create({ url: chrome.extension.getURL("/config/options.html") }, function(tab) {});
-
-
-});
-
-
-
-
-
-//do a xhr from chrome api, with escalated privledges to bypass cors and re-use user's cookies
-//then return the page's html in a callback
-//requires manifest permission  "*://*/*"
-//background.js high-level APIs, logging to Inspect: background in extensions
 
 
 chrome.runtime.onMessage.addListener(function(request, sender, callback) {
