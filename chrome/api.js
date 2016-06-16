@@ -46,7 +46,4 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
             window.lastSwagTime = Date.now();
         }
 
-    if (request.action == "openTab")
-        chrome.tabs.create({ url: request.url });
-
 });

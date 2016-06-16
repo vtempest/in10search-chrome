@@ -12,7 +12,7 @@ console.log(article)
 document.querySelector('head').innerHTML = ''
 
 var cite = '<div id="cite">' + article.byline + " " + article.title + " " + location.href + '</div>'
-var aside = '<aside><button id="speak">Speak</button></aside>';
+var aside = '<aside><button id="speak"></button></aside>';
 document.body.innerHTML = cite + aside + '<article contenteditable>' +
     article.content.replace(/<img[^>]+>/gi, '') + '</article>'
 
@@ -21,15 +21,21 @@ document.querySelector("#speak").addEventListener("click", function() {
 
     var text = document.querySelector("article").textContent.replace(/\n/g, ' ');
 
-    chrome.runtime.sendMessage({ action: 'tts', data: text }, function() {})
+    actionType = this.className == "pause" ? { action: "tts-pause" }: { action: "tts" , data: text };
+
+    alert(actionType)
+
+    chrome.runtime.sendMessage(actionType, function() {})
+
+
+    this.className = "pause"
 
 
 
 
 }, 0)
 
-
-
+if(0)  //CANCEL
 chrome.runtime.sendMessage({
     action: 'textapi',
     data: { url: location.href }
@@ -86,39 +92,30 @@ chrome.runtime.sendMessage({
             if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList, "term") > -1) {
                 var term = e.path[i].textContent;
 
-                console.log(e)
 
 
+                chrome.runtime.sendMessage({
+                    action: 'read-xhr',
+                    term: term
+                }, function(bestResult) {
 
-
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', "http://lookup.dbpedia.org/api/search.asmx/KeywordSearch?QueryString=" + term, true);
-                xhr.onload = function() {
-                    var results = JSON.parse(xhr.responseText).results;
-                    var bestResult = results[0]
-                    for (var i in results)
-                        if (results[i].label == term)
-                            bestResult = results[i];
 
                     var desc = bestResult.description
 
-                    var uri_term = results[i].uri.substring(bestResult.uri.lastIndexOf('/'))
-                        // debugger
+                    var uri_term = bestResult.uri.substring(bestResult.uri.lastIndexOf('/'))
+
+                    e.path[i].setAttribute("data-term", uri_term);
+
+                    // debugger
                     define.innerHTML = desc + " <a target='_blank' href='https://en.wikipedia.org/wiki" + uri_term + "'>More</a>";
 
 
-                     define.style.display = "block";
-                    define.style.top = e.pageY +"px";
-                    define.style.left = e.pageX +"px";
-                    
+                    define.style.display = "block";
+                    define.style.top = e.pageY + "px";
+                    define.style.left = e.pageX + "px";
 
 
-                };
-                xhr.setRequestHeader('Accept', 'application/json');
-
-                xhr.send();
-
-
+                })
 
 
                 break;
@@ -127,14 +124,43 @@ chrome.runtime.sendMessage({
     }, 0)
 
 
+
+
+
     document.body.addEventListener("mouseout", function(e) {
+
+        define.style.display = "none";
 
         for (var i in e.path)
             if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList, "term") > -1) {
-             
 
-                     define.style.display = "none";
 
+                define.style.display = "block";
+
+                break;
+            }
+
+    }, 0)
+
+
+
+    document.body.addEventListener("mousedown", function(e) {
+
+        for (var i in e.path)
+            if (e.path[i].classList && Array.prototype.indexOf.call(e.path[i].classList, "term") > -1) {
+
+
+                var wikiUrl = e.path[i].getAttribute("data-term");
+
+                if (!wikiUrl)
+                    return
+
+
+                chrome.runtime.sendMessage({
+                    action: 'openTab',
+                    url: "https://en.wikipedia.org/wiki" + wikiUrl,
+                    bg: true
+                }, function(bestResult) {})
 
 
                 break;

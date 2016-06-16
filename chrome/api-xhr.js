@@ -51,12 +51,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
 /*****                  REQUEST                   *****/
 chrome.webRequest.onBeforeSendHeaders.addListener(function(req) {
 
-    console.groupCollapsed("REQ " + req.url);
-    console.log(JSON.stringify(req, null, 2))
-    console.groupEnd();
-
-
-    //req.url.startsWith("http:")
 
     if (!req.tabId < 1) return {};
 
@@ -73,21 +67,14 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(req) {
                     break;
                 }
 
-
             localStorage.setItem(req.requestId, domain)
-
-
 
             return { requestHeaders: req.requestHeaders };
         } else {
             return;
         }
 
-
-
     })
-
-
 
 
 }, { urls: ["<all_urls>"] }, ['blocking', 'requestHeaders']);
@@ -123,19 +110,30 @@ chrome.webRequest.onHeadersReceived.addListener(function(res) {
 
         else if (res.responseHeaders[i].name.toLowerCase() == 'x-frame-options')
             res.responseHeaders[i].value = '';
-
-
-
     }
-
-
-
-    console.groupCollapsed("%cRESPONSE " + res.url, "color:green;");
-    console.log("%c" + JSON.stringify(res, 0, 1), 'background:   rgb(220,255,220)')
-    console.groupEnd();
-
-
-
 
     return { responseHeaders: res.responseHeaders };
 }, { urls: ["<all_urls>"] }, ['blocking', 'responseHeaders']);
+
+
+
+
+
+
+/*                              LOGGING DEBUG                       */
+
+DEBUG = false;
+
+if(DEBUG){
+chrome.webRequest.onBeforeSendHeaders.addListener(function(req) {
+    console.groupCollapsed("REQ " + req.url);
+    console.log(JSON.stringify(req, null, 2))
+    console.groupEnd();
+}, { urls: ["<all_urls>"] }, ['blocking', 'requestHeaders']);
+
+chrome.webRequest.onHeadersReceived.addListener(function(res) {
+    console.groupCollapsed("%cRESPONSE " + res.url, "color:green;");
+    console.log("%c" + JSON.stringify(res, 0, 1), 'background:   rgb(220,255,220)')
+    console.groupEnd();
+}, { urls: ["<all_urls>"] }, ['blocking', 'responseHeaders']);
+}
