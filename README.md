@@ -1,8 +1,10 @@
 
-###in10search
+##in10search
+
+
+
 ####GEAR: Google with enhanced auto-loading results
 
-Enhance Google web results page, so that on mouseover of the result link, load the target page on the right half in an iframe
 
 
 ####READ: Reading-Mode with Entity Analysis and Definitions
@@ -20,4 +22,9 @@ Enhance Google web results page, so that on mouseover of the result link, load t
 ####CATS: Ctrl+F across-all tabs search
 
 
-####VAST: Voice Activated Search Terms
+
+####VAST: Voice Activated Search Trigger
+
+
+
+####HITS: Historical Interactive Timeline for Session
