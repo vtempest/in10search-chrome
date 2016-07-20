@@ -1,7 +1,7 @@
 
 var swag = {
-	visible: 0, //debugger show the motion cam on page
-    sensitivity: 40, //value from 0 to 100% sensitive
+	visible: 1, //debugger show the motion cam on page
+    sensitivity: 50, //value from 0 to 100% sensitive
     filteredTotal: 0, //number of changed pixel after filtering
     minTotalChange: 400, //300	//minimum total number of pixels that need to change, before we decide that a gesture is happening
     minDirChange: 6, //minimum number of pixels that need to change to assert a directional change

@@ -14,13 +14,13 @@ document.addEventListener("DOMContentLoaded", function() {
         if(!window.enableSwag.checked) return;
 
 
-        swag.start().onRight = function(){
-            clearTimeout(window.swagTimeout)
+        // swag.start().onRight = function(){
+        //     clearTimeout(window.swagTimeout)
 
-            window.swagTimeout = setTimeout(navNext, 2500)
-        // swag.start().onLeft = navPrior; 
+        //     window.swagTimeout = setTimeout(navNext, 2500)
+        // // swag.start().onLeft = navPrior; 
 
-         }
+        //  }
 
 
     }, 500)    

@@ -37,3 +37,6 @@ cache: if 404
       "strict_min_version": "46.0"
     }
 }
+
+
+auto synonyms

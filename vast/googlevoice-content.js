@@ -11,4 +11,4 @@ window.clickVoice = setInterval(function() {
 
     } 
 
-   }, 500);
+   }, 1);

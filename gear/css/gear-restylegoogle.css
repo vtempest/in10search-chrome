@@ -1,5 +1,17 @@
 
+.mslg{
+    display: flex;
+}
+.mslg .vsc {
+    width: 100% !important;
+}
+.mslg>td{
+    width: 200px;
+}
 
+.nrgt{
+margin: 0 !important;
+}
 
 /* restyle google default page */
 

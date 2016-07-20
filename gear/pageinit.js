@@ -60,6 +60,11 @@ function xhr(url, cb) {
 
 
 document.addEventListener("DOMContentLoaded", function() {
+    
+
+    //DISABLE
+    return
+
 
 
     //only on specific pages of web results
@@ -84,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
     //SETTINGS
 
 
-    var icon = chrome.extension.getURL("config/in10-icon-small.png")
+    var icon = chrome.extension.getURL("config/icon/in10-icon-clear.png")
 
     window.sblsbb.innerHTML += "<nav id='settings-btn' style='background-image: url(\"" + icon 
             + "\"); '><nav id='settings'></nav></nav>";

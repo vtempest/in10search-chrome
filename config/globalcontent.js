@@ -1,44 +1,34 @@
+
+
+
+
 window.addEventListener("keydown", onKeyDown, false);
 
-window.addEventListener("mouseup", function(e){
 
-
-    var s = getSelection()+"";
-
-    if (s.length < 50 && s.length > 2)
-
-
-            chrome.runtime.sendMessage({    action: 'word-key', selectionText: s}, function(res) { })
-
-
-
-
-
-}, false);
 
 function onKeyDown(e) {
 
 
-    if (e.keyCode == 82 && e.altKey && e.ctrlKey  ){
+    if (e.keyCode == 82 && e.altKey && e.ctrlKey) {
 
 
-            chrome.runtime.sendMessage({    action: 'read' }, function(res) { })
+        chrome.runtime.sendMessage({ action: 'read' }, function(res) {})
 
 
     }
 
- if (e.keyCode == 191 ){
+    if (e.keyCode == 191) {
 
 
 
-            chrome.runtime.sendMessage({    action: 'word-key', selectionText: getSelection()+"" }, function(res) { })
+        chrome.runtime.sendMessage({ action: 'word-key', selectionText: getSelection() + "" }, function(res) {})
 
 
     }
 
 
     //tab = search text shortcut
-    if (e.keyCode == 9 && !e.altKey && !e.ctrlKey  ){
+    if (e.keyCode == 9 && !e.altKey && !e.ctrlKey) {
 
 
 
@@ -70,4 +60,3 @@ function onKeyDown(e) {
         */
     }
 }
-

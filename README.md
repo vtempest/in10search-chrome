@@ -3,7 +3,7 @@
 
 
 
-####GEAR: Google with enhanced auto-loading results
+####GEAR: Google with Enhanced Auto-loading Results
 
 
 
@@ -15,11 +15,11 @@
 
 
 
-####SWAG: swipe webcam arm gestures 
+####SWAG: Swipe Webcam Arm Gestures 
 
 
 
-####CATS: Ctrl+F across-all tabs search
+####CATS: Ctrl+F Across-all Tabs Search
 
 
 

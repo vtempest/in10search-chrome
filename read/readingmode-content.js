@@ -9,31 +9,21 @@ var uri = {
 var article = new Readability(uri, document).parse();
 
 console.log(article)
-document.querySelector('head').innerHTML = ''
+
+window.title = document.querySelector('title').textContent;
+
+document.querySelector('head').innerHTML =  '';
+
+
 
 var cite = '<div id="cite">' + article.byline + " " + article.title + " " + location.href + '</div>'
-var aside = '<aside><button id="speak"></button></aside>';
+var aside =    '<input id="slider" type=range value=25 min=0 max=80 step=1 /><div id="keywords"></div>'; // '<aside><button id="speak"></button></aside>';
 document.body.innerHTML = cite + aside + '<article contenteditable>' +
     article.content.replace(/<img[^>]+>/gi, '') + '</article>'
 
 
-document.querySelector("#speak").addEventListener("click", function() {
-
-    var text = document.querySelector("article").textContent.replace(/\n/g, ' ');
-
-    actionType = this.className == "pause" ? { action: "tts-pause" }: { action: "tts" , data: text };
-
-    alert(actionType)
-
-    chrome.runtime.sendMessage(actionType, function() {})
 
 
-    this.className = "pause"
-
-
-
-
-}, 0)
 
 if(0)  //CANCEL
 chrome.runtime.sendMessage({
@@ -67,6 +57,7 @@ chrome.runtime.sendMessage({
 
     var conceptsJSON = res.concepts;
 
+
     for (var i in conceptsJSON) {
         var term = conceptsJSON[i].surfaceForms[0].string;
 
@@ -77,6 +68,9 @@ chrome.runtime.sendMessage({
         document.body.innerHTML = document.body.innerHTML
             .replace(term, "<span class='term'>" + term + "</span>")
 
+
+
+        console.log(term)
 
     }
 
@@ -111,8 +105,8 @@ chrome.runtime.sendMessage({
 
 
                     define.style.display = "block";
-                    define.style.top = e.pageY + "px";
-                    define.style.left = e.pageX + "px";
+                    // define.style.top = e.pageY + "px";
+                    // define.style.left = e.pageX + "px";
 
 
                 })
@@ -169,6 +163,31 @@ chrome.runtime.sendMessage({
     }, 0)
 
 
+
+
+
+
+        ///TTS
+
+
+
+    document.querySelector("#speak").addEventListener("click", function() {
+
+        var text = document.querySelector("article").textContent.replace(/\n/g, ' ');
+
+        actionType = this.className == "pause" ? { action: "tts-pause" }: { action: "tts" , data: text };
+
+        // alert(actionType.action)
+
+        chrome.runtime.sendMessage(actionType, function() {})
+
+
+        this.className = "pause"
+
+
+
+
+    }, 0)
 
 
 

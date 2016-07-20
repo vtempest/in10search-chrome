@@ -1,42 +1,29 @@
-
-
-#word{
-
-    text-align: left;  
-
+#word {
+    text-align: left;
     background: aliceblue;
-
-                box-shadow: 4px 4px 3px -3px gray;
-
+    box-shadow: 4px 4px 3px -3px gray;
     color: rgb(48, 44, 34);
     font-family: "Verdana", "Palatino Linotype", "Book Antiqua", serif !important;
-    font-size:9pt;
+    font-size: 9pt;
     background-color: rgb(248, 248, 248);
-
-
     overflow: auto;
     max-width: 400px;
     position: fixed;
-    left:10px;
+    left: 10px;
     bottom: 10px;
     right: left;
     z-index: 9999999999;
-    padding:7px;
-
-
-      background: #fff;
-  border-radius: 2px;
-   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-
+    padding: 7px;
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     transition: .5s;
     line-height: 14pt;
-
-     transform: translateY(120%); 
-     cursor: pointer;;
+    transform: translateY(120%);
+    cursor: pointer;
 }
 
 #word:hover,
-#word.min{
-
-     transform: initial; 
+#word.min {
+    transform: initial;
 }

@@ -47,12 +47,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
 
 
 
-
-/*****                  REQUEST                   *****/
+/*****                  REQUEST                   ****
 chrome.webRequest.onBeforeSendHeaders.addListener(function(req) {
 
+    if (req.tabId < 1) return {};
 
-    if (!req.tabId < 1) return {};
+    // if (!req.tabId < 1) return {};
 
     chrome.tabs.get(req.tabId, function(tab) {
 
@@ -82,7 +82,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(req) {
 
 
 
-/*****                  RESPONSE                   *****/
+/*****                  RESPONSE                   *****
 chrome.webRequest.onHeadersReceived.addListener(function(res) {
 
     var domain = localStorage.getItem(res.requestId);
@@ -116,7 +116,7 @@ chrome.webRequest.onHeadersReceived.addListener(function(res) {
 }, { urls: ["<all_urls>"] }, ['blocking', 'responseHeaders']);
 
 
-
+*/
 
 
 

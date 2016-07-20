@@ -3,38 +3,40 @@
     "description": "Search GEAR: Google with enhanced auto-loading results • READ: Reading-Mode with Entity Analysis and Definitions • WORD: Wikipedia On-page Research Definition • SWAG: swipe webcam arm gestures • CATS: Ctrl+F across-all tabs search",
     "version": "2.0.0",
     "manifest_version": 2,
-    "author": "Alex Gulakov, CC SA-BY 3.0",
+    "author": "Alex Gulakov, CC SA-BY 4.0",
     "permissions": [
         "*://*/*",
         "webRequest", "webRequestBlocking", "webNavigation",
-        "storage", "contextMenus", "tabs", "tts"
+        "storage", "contextMenus", "tabs", "tts", "history" 
     ],
     "content_scripts": [{
-            "matches": ["*://*.google.com/*"],
-            "js": ["gear/pageinit.js", "gear/navigate.js",
-                "gear/autoload.js", "gear/infinitescroll.js"
-            ],
-            "css": ["gear/css/gear-style.css", "gear/css/gear-restylegoogle.css", 
-                "gear/css/uiToggle.css", "gear/css/uiLoader.css"],
-            "run_at": "document_start",
-            "all_frames": true
-        },
-        {
-            "matches": ["<all_urls>"],
-            "js": ["config/globalcontent.js"],
-            "all_frames": true
-        }
-    ],
+        "matches": ["*://*.google.com/*"],
+        "js": ["gear/pageinit.js", "gear/navigate.js",
+            "gear/autoload.js", "gear/infinitescroll.js"
+        ],
+        "css": ["gear/css/gear-style.css", "gear/css/gear-restylegoogle.css",
+            "gear/css/uiToggle.css", "gear/css/uiLoader.css"
+        ],
+        "run_at": "document_start",
+        "all_frames": true
+    }, {
+        "matches": ["<all_urls>"],
+        "js": ["config/globalcontent.js" , "word/word-content.js" ],
+        "all_frames": true
+    }],
     "background": {
-        "scripts": [  "read/readingmode.js",  "word/word-api.js",   "swag/swag.js",   "swag/swag-api.js",  
-            "config/api-install.js","gear/api-xhr.js","vast/googlevoice.js"],
+        "scripts": ["read/readingmode-api.js", "word/word-api.js",
+            "swag/swag.js", "swag/swag-api.js",
+            "config/api-install.js", "gear/api-xhr.js",
+            "vast/googlevoice.js", "hits/hits-api.js"
+        ],
         "persistent": true
     },
 
     "icons": {
-        "64": "config/in10-icon64.png",
+        "64": "config/icon/in10-icon64.png",
 
-        "16": "config/in10-icon16.png"  
+        "16": "config/icon/in10-icon16.png"
     },
     "options_ui": {
         "page": "config/options.html",
@@ -43,7 +45,7 @@
 
     "browser_action": {
         "default_icon": {
-            "38": "config/in10-icon-small.png"
+            "38": "config/icon/in10-icon-clear.png"
         },
         "default_popup": "cats/alltabfind-popup.html",
         "default_title": "Ctrl+F Across-all Tabs Search"
@@ -73,11 +75,5 @@
 
     "web_accessible_resources": [
         "gear/*", "config/*"
-    ],
-
-    "applications": {
-      "gecko": {
-      "id": "in10search@mozilla.org",
-      "strict_min_version": "46.0"
-    }}
+    ]
 }

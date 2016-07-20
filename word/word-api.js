@@ -1,7 +1,7 @@
 
 
 chrome.contextMenus.create({
-    "title" : "• Wiki Define • %s •",
+    "title" : "• Wiki Define • %s",
     "id": "contextOKGO",
     "contexts" : ["selection"],
     "onclick" : contextClickOKGO
@@ -43,7 +43,7 @@ function contextClickOKGO(info, tab) {
                     var results = JSON.parse(xhr.responseText).results;
                     var bestResult = results[0]
                     for (var i in results)
-                        if (results[i].label == term)
+                        if (results[i].label.toLowerCase() == term.toLowerCase())
                             bestResult = results[i];
 
                     if (!bestResult)
@@ -56,12 +56,12 @@ function contextClickOKGO(info, tab) {
 
                         desc = bestResult.description + " <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki"  + uri_term + "\"></a>";
                         
-
+                        chrome.tts.speak(desc, {voiceName: "Google UK English Male",'rate': 3.0})
                         
                         chrome.tabs.executeScript(tab.id, {code:  "window.worddefine = \"" + escape(desc) + "\";"     });
 
                          chrome.tabs.executeScript(tab.id, {
-                            file:  "word/word-content.js"
+                            file:  "word/word-cardview.js"
                         });
 
                           chrome.tabs.insertCSS(tab.id, {
