@@ -1,30 +1,23 @@
+## in10search Tab Manager AI 
 
-##in10search
-
-
-
-####GEAR: Google with Enhanced Auto-loading Results
+- Horizontal Tabs in Browser Sidepanel with Search
 
 
-
-####READ: Reading-Mode with Entity Analysis and Definitions
-
+## Ideas for Future Development
 
 
-####WORD: Wikipedia On-page Research Definition 
+- Ask ChatGPT About Text Content of All Open Tabs
 
+- readability extract article, cite 
 
+- scroll and highlight the query words on result
 
-####SWAG: Swipe Webcam Arm Gestures 
+- tree tab view and history view 
 
+- autogen suggested [Tab Groups](https://developer.chrome.com/docs/extensions/reference/tabGroups/)
 
+- auto keywords generator and search query builder related keywords 
 
-####CATS: Ctrl+F Across-all Tabs Search
+- backup & close a read-it-later list
 
-
-
-####VAST: Voice Activated Search Trigger
-
-
-
-####HITS: Historical Interactive Timeline for Session
+- show current url & title when full screen
