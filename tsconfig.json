@@ -9,6 +9,6 @@
         "checkJs": true,
         "isolatedModules": true
     },
-    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src-x/pages/sidepanel/index.ts"],
+    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/pages/sidepanel/index.ts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

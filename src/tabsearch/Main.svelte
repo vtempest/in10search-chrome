@@ -1,37 +1,73 @@
-<script lang="ts">
-  import { onMount, setContext  } from "svelte";
+<script>
+  import { onMount, setContext } from "svelte";
   import Result from "./Result.svelte";
 
   let inSearch;
-  let tabDisplay = "";
+  let tabDisplay;
+
+  let tabMessageDiv;
   let tabMessage = "";
   let searchText = "";
-  let results = [];
 
   $: results = [];
 
   onMount(function () {
     //fill with pre-existing text
-    tabMessage =
-      "Start typing to match all the words in the content of open tabs.";
+    tabMessage = "Search to find all words in the content of open tabs.";
   });
 
+  function searchGoogle() {
+    searchText = searchText || "tesla rumors";
+
+    var url = "https://www.perplexity.ai/?q=" + encodeURIComponent(searchText);
+
+    chrome.tabs.create({ url, active: false }, function (tab) {
+      console.log(tab.id);
+
+      function inputSearch(searchTerms) {
+        setTimeout(() => {
+          console.log("inputSearch========================");
+          console.log(document.querySelector("textarea[name='q']"));
+          document.querySelector("textarea[name='q']").value = searchTerms;
+        }, 1000);
+
+        document.querySelector("textarea[name='q']").value = "searchTerms";
+
+        chrome.runtime.sendMessage({
+          type: "inputSearch",
+          content: document.body.innerHTML,
+        });
+      }
+
+      chrome.scripting
+        .executeScript({
+          target: { tabId: tab.id },
+          func: inputSearch,
+          args: [searchText],
+
+          // files : [ "src/pages/content/index.ts.js" ],
+        })
+        .then(() => console.log("injected a function"));
+
+      setTimeout(() => {
+        chrome.tabs.update(tab.id, { selected: true });
+      }, 3000);
+    });
+  }
 
   //on typing into search box, query all the open tabs
   function onSearchType() {
-   
-
-    $: results = [];
-
+    results = [];
 
     //launch script to search all tabs in all windows
     chrome.windows.getAll({ populate: true }, function (winArray) {
       for (var i in winArray) {
         chrome.tabs.query({ windowId: winArray[i].id }).then(function (tabs) {
-          function getTabContent(tabId) {
+          function getTabContent(tabId, favIconUrl) {
             chrome.runtime.sendMessage({
               type: "getHTML",
-              tabId: tabId,
+              tabId,
+              favIconUrl,
               title: document.title,
               content: document.body.innerHTML,
             });
@@ -39,44 +75,41 @@
 
           for (var i in tabs) {
             try {
-
-              chrome.scripting.executeScript({
-                target: { tabId: tabs[i].id, allFrames: true },
-                func: getTabContent,
-                args: [tabs[i].id],
-              });
+              if (!tabs[i].url?.startsWith("chrome://"))
+                chrome.scripting.executeScript({
+                  target: { tabId: tabs[i].id, allFrames: true },
+                  func: getTabContent,
+                  args: [tabs[i].id, tabs[i].favIconUrl],
+                });
             } catch (e) {}
           }
         }, false);
       }
 
-      /*
-        //after tabs processed
-    setTimeout(function () {
+      //after tabs processed
+      setTimeout(function () {
+        //if results found
+        if (tabDisplay.querySelectorAll("div").length > 0) {
+          //shade current tab
+          chrome.tabs.query(
+            { active: true, currentWindow: true },
+            function (tabCurrent) {
+              if (tabDisplay.querySelector("#tab" + tabCurrent[0].id) != null)
+                tabDisplay.querySelector("#tab" + tabCurrent[0].id).className +=
+                  " currentTab";
+            }
+          );
 
-      //if results found
-      if (document.querySelector("#tabDisplay").innerHTML.length > 0) {
-        //shade current tab
-        chrome.tabs.query(
-          { active: true, currentWindow: true },
-          function (tabCurrent) {
-            if (document.querySelector("#tab" + tabCurrent[0].id) != null)
-              document.querySelector("#tab" + tabCurrent[0].id).className +=
-                " currentTab";
-          }
-        );
-
-        //create a Move all tabs link
+          /*/create a Move all tabs link
         var a = document.createElement("a");
         a.setAttribute("href", "#");
         a.innerText = "Move all results to new window";
-        tabMessage.innerHTML = "";
-        tabMessage.appendChild(a);
+        tabMessageDiv.innerHTML = "";
+        tabMessageDiv.appendChild(a);
 
         //process Move all tabs click
         a.addEventListener("click", function () {
-          var tabDivs = document
-            .getElementById("tabDisplay")
+          var tabDivs = tabDisplay
             .getElementsByClassName("tabDiv");
           var tabIds = [];
 
@@ -91,157 +124,129 @@
             }
           );
         });
-      } else {
-        //if no results found
-          // tabMessage = "No results were found.";
-      }
-    }, 300);*/
+        */
+        } else {
+          // if no results found
+          tabMessage = "No results were found.";
+        }
+      }, 300);
     });
   }
 
-  
   //process content text for each tab
-  chrome.runtime.onMessage.addListener(function (
-    request,
-    sender,
-    sendResponse
-  ) {
-    if (request.type == "getHTML") {
-      var {tabId, title}  = request;
-      //TODO strip HTML of tags
-      var content =
-        title + " " + request.content
-          .replace(/<style(.|\n)+?\/style>/gi, "")
-          .replace(/<noscript(.|\n)+?\/noscript>/gi, "")
-          .replace(/<script(.|\n)+?\/script>/gi, "")
-          .replace(/<(.|\n)+?>/gi, "");
-
-
-
-      //delete from tab display if already listed
-      if (results?.map( (x)=>x.id).indexOf(tabId) > -1) {
-        // return;
-        results.splice(content.map((x)=>x.id).indexOf(tabId), 1);
+  chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse) {
+      if (request.type == "inputSearch") {
+        console.log(request.title);
       }
 
-      //search to find all words in tab content
-      var foundAllWords = true;
-      var searchSplit = searchText.split(" ");
+      if (request.type == "getHTML") {
+        var { tabId, title, favIconUrl } = request;
 
-      console.log(searchText)
+        //TODO strip HTML of tags
+        var content =
+          title +
+          " " +
+          request.content
+            .replace(/\r?\n|\r/g, " ")
+            .replace(/<style(.|\n)+?\/style>/gi, "")
+            .replace(/<noscript(.|\n)+?\/noscript>/gi, "")
+            .replace(/<script(.|\n)+?\/script>/gi, "")
+            .replace(/<(.|\n)+?>/gi, " ");
 
-      for (var i in searchSplit)
-        if (searchSplit[i].length > 0)
-          if (content.toLowerCase().indexOf(searchSplit[i]) == -1)
-            foundAllWords = false;
-
-
-      
-
-
-      
-
-      //quit if all words not found
-      if (!foundAllWords) return;
-
-      //create title
-
-      if (title.length > 45) title = title.substr(0, 45) + "&hellip;";
-
-
-
-
-      /*/create favIcon
-      chrome.tabs.get(tabId, function (tab) {
-        if (tab.favIconUrl.length > 0) {
-          if (
-            document.querySelector("#tab" + tab.id)?.getElementsByTagName("img").length ==
-            0
-          ) {
-            var img = document.createElement("img");
-            img.setAttribute("src", tab.favIconUrl);
-            img.setAttribute("width", "16px");
-            img.setAttribute("height", "16px");
-            document.querySelector("#tab" + tab.id).insertBefore(
-              img,
-              document.querySelector("#tab" + tab.id).firstChild
-            );
-          }
+        //delete from tab display if already listed
+        if (results?.map((x) => x.id).indexOf(tabId) > -1) {
+          // return;
+          results.splice(content?.map((x) => x.id).indexOf(tabId), 1);
         }
-      }); */
 
-      //create snippet substring
-      var indexHit = content.toLowerCase().indexOf(searchSplit[i]);
+        //search to find all words in tab content
+        var foundAllWords = true;
+        var searchSplit = searchText.trim().split(" ");
 
-      console.log (indexHit)
-      var priorText = indexHit > 50 ? 50 : indexHit;
-      var dispString =
-        content.substring(Math.max(indexHit - 50, 0), priorText) +
-        "<b>" +
-        content.substring(indexHit, searchSplit[i].length) +
-        "</b>" +
-        content.substring(indexHit + searchSplit[i].length, 50);
+        for (var i in searchSplit)
+          if (searchSplit[i].length > 0)
+            if (content.toLowerCase().indexOf(searchSplit[i]) == -1)
+              foundAllWords = false;
 
-      
-      var resultObj = {dispString, id: tabId, title};
+        //quit if all words not found
+        if (!foundAllWords) return;
 
-      results.push(resultObj);
-      
-      //needed to make []{} reactive
-      results = results;
-      
+        let lastSearchWord = searchSplit[searchSplit.length - 1];
+
+        //create title
+        if (title.length > 45) title = title.substr(0, 45) + "&hellip;";
+
+        //create snippet substring
+        let indexStartWord = content.toLowerCase().indexOf(lastSearchWord);
+        let indexEndWord = indexStartWord + lastSearchWord.length;
+
+        let snippetTextSize = 100;
+
+        let dispString =
+          content.substring(
+            Math.max(indexStartWord - snippetTextSize, 0),
+            indexStartWord
+          ) +
+          "<b>" +
+          content.substring(indexStartWord, indexEndWord) +
+          "</b>" +
+          content.substring(indexEndWord, indexEndWord + snippetTextSize);
+
+        console.log(dispString);
+
+        var resultObj = {
+          dispString,
+          id: tabId,
+          title,
+          favIconUrl,
+          lastSearchWord,
+        };
+
+        results.push(resultObj);
+
+        //needed to make []{} reactive
+        results = results;
+      }
     }
-  });
+  );
+
 </script>
 
-<div class="container">
-  <input
-    bind:value={searchText}
-    type="text"
-    id="inSearch"
-    bind:this="{inSearch}"
-    on:keyup="{onSearchType}"
-  />
-  <div id="tabDisplay">
+<div class="container mx-auto p-4 max-w-sm">
+  <div class="mb-4">
+    <input
+      bind:value={searchText}
+      type="text"
+      id="inSearch"
+      bind:this={inSearch}
+      on:keyup={onSearchType}
+      class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      placeholder={tabMessage}
+    />
+  </div>
+
+  <button 
+    on:click={searchGoogle} 
+    class="w-full mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 flex items-center justify-center"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+    Search
+  </button>
+
+  <nav class="space-y-2" id="tabDisplay" bind:this={tabDisplay}>
     {#each results as result}
       <Result {result} />
     {:else}
-  <div id="tabMessage">{tabMessage}</div>
+      <div 
+        id="tabMessage" 
+        bind:this={tabMessageDiv}
+        class="p-2 text-sm italic text-gray-600"
+      >
+        {tabMessage}
+      </div>
     {/each}
-  </div>
+  </nav>
 </div>
-
-<style>
-  :global(body) {
-    overflow: hidden;
-    margin: 5px;
-    padding: 0;
-    background: white;
-  }
-  #tabDisplay {
-    min-width: 300px;
-    max-width: 300px;
-    font-size: 10pt;
-  }
-
-  #tabDisplay img {
-    padding-right: 3px;
-  }
-  #tabMessage {
-    padding-top: 2px;
-    padding-bottom: 2px;
-    min-width: 300px;
-    font-size: 10pt;
-    font-style: italic;
-    cursor: default;
-  }
-
-  #tabMessage a {
-    font-style: normal;
-    color: #2f4f4f;
-  }
-
-  #inSearch {
-    min-width: 300px;
-  }
-</style>

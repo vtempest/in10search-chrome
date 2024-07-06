@@ -1,6 +1,11 @@
 
 
 
+console.log("inputSearchbg");
+
+    // document.querySelector("textarea[name='q']").value = "searchText";
+
+
 
 // window.addEventListener("keydown", onKeyDown, false);
 
