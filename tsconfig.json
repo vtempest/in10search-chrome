@@ -1,6 +1,11 @@
 {
     "extends": "@tsconfig/svelte/tsconfig.json",
     "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "$lib": ["./src/lib"],
+        "$lib/*": ["./src/lib/*"]
+      },
         "target": "ESNext",
         "useDefineForClassFields": true,
         "module": "ESNext",
@@ -10,5 +15,5 @@
         "isolatedModules": true
     },
     "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/pages/sidepanel/index.ts"],
-    "references": [{ "path": "./tsconfig.node.json" }]
+    "references": [{ "path": "./tsconfig.node.json" }],
 }

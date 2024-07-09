@@ -10,20 +10,23 @@
 
 * Search Inside All Open Tabs Page Content
 
-* Scroll to and highlight the query on page
+* Scroll to and highlight the query on page, click result again for next
 
 * Resolve query against LLM search or Google
 
-
 ### Screenshot 
 
-<img src="https://i.imgur.com/tpToRRB.png">
+<img src="https://i.imgur.com/gG1nJQE.png">
 
 
 ## Ideas for Future Development
 
+* font speed https://media.nngroup.com/media/editor/2022/04/14/16-fonts-reading-speed.png
+*paste from clipboard and searh
 
 * Ask ChatGPT about Text Content of All Open Tabs
+
+* WordNet definintion and synonyms
 
 * Reader Mode to Extract main content text and cite 
 

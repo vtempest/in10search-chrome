@@ -1,37 +1,80 @@
-<script>
+<script lang="ts">
   import { onMount, setContext } from "svelte";
   import Result from "./Result.svelte";
+  import { Search } from 'lucide-svelte';
+  import { Input } from "$lib/components/ui/input";
+  import { Select, SelectContent, SelectItem,
+     SelectTrigger, SelectValue } from "$lib/components/ui/select";
+  import { Button } from "$lib/components/ui/button";
 
-  let inSearch;
+
+
   let tabDisplay;
-
-  let tabMessageDiv;
-  let tabMessage = "";
-  let searchText = "";
+  //the devil is in the defaults
+  let selectedSearchEngine = "Perplexity" ;
+  let searchText = '';
+  let results = [];
+  let tabMessage = 'Enter your search query';
 
   $: results = [];
 
   onMount(function () {
-    //fill with pre-existing text
-    tabMessage = "Search to find all words in the content of open tabs.";
+    tabMessage = "Search tabs, favorites, wiki, or web";
   });
+  
+  function handleSelectChange(event) {
+    selectedSearchEngine = event.value;
+  }
+  
 
-  function searchGoogle() {
-    searchText = searchText || "tesla rumors";
+  function searchSelected() {
+    searchText = searchText;
 
-    var url = "https://www.perplexity.ai/?q=" + encodeURIComponent(searchText);
-
+    let url;
+    switch (selectedSearchEngine) {
+     
+      case "Perplexity AI":
+        url = "https://www.perplexity.ai/?q=" + encodeURIComponent(searchText);
+        break;
+      case "Google":
+        url = "https://www.google.com/search?q=" + encodeURIComponent(searchText);
+        break;
+      case "DuckDuckGo":
+        url = "https://duckduckgo.com/?q=" + encodeURIComponent(searchText);
+        break;
+      case "google_first": //manual
+        url = "https://www.google.com/search?q=" + encodeURIComponent(searchText);
+        break;
+      case "DDG Go To First":
+        url = "https://duckduckgo.com/?q=%5C" + encodeURIComponent(searchText);
+        break;
+    }
     chrome.tabs.create({ url, active: false }, function (tab) {
       console.log(tab.id);
 
-      function inputSearch(searchTerms) {
+      function inputSearch(searchTerms, engine) {
         setTimeout(() => {
-          console.log("inputSearch========================");
-          console.log(document.querySelector("textarea[name='q']"));
-          document.querySelector("textarea[name='q']").value = searchTerms;
+          let inputSelector;
+          switch (engine) {
+            case "google":
+              inputSelector = "input[name='q']";
+              break;
+            case "perplexity":
+              inputSelector = "textarea[name='q']";
+              break;
+            case "claude":
+              inputSelector = "textarea[placeholder='Enter your message here']"; // Adjust this selector for Claude
+              break;
+            case "duckduckgo":
+              inputSelector = "input[name='q']";
+              break;
+          }
+          const inputElement = document.querySelector(inputSelector);
+          if (inputElement) {
+            inputElement.value = searchTerms;
+            inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+          }
         }, 1000);
-
-        document.querySelector("textarea[name='q']").value = "searchTerms";
 
         chrome.runtime.sendMessage({
           type: "inputSearch",
@@ -43,9 +86,7 @@
         .executeScript({
           target: { tabId: tab.id },
           func: inputSearch,
-          args: [searchText],
-
-          // files : [ "src/pages/content/index.ts.js" ],
+          args: [searchText, selectedSearchEngine],
         })
         .then(() => console.log("injected a function"));
 
@@ -56,14 +97,17 @@
   }
 
   //on typing into search box, query all the open tabs
-  function onSearchType() {
+  function onSearchType(event) {
+    searchText = event.target.value;
     results = [];
 
     //launch script to search all tabs in all windows
     chrome.windows.getAll({ populate: true }, function (winArray) {
       for (var i in winArray) {
         chrome.tabs.query({ windowId: winArray[i].id }).then(function (tabs) {
+          
           function getTabContent(tabId, favIconUrl) {
+            //send message to get HTML content, title and pass thru id/icon
             chrome.runtime.sendMessage({
               type: "getHTML",
               tabId,
@@ -76,6 +120,7 @@
           for (var i in tabs) {
             try {
               if (!tabs[i].url?.startsWith("chrome://"))
+                //gets tabID and favicon from chrome api
                 chrome.scripting.executeScript({
                   target: { tabId: tabs[i].id, allFrames: true },
                   func: getTabContent,
@@ -141,13 +186,13 @@
       }
 
       if (request.type == "getHTML") {
-        var { tabId, title, favIconUrl } = request;
+        var { tabId, title, favIconUrl, content } = request;
 
         //TODO strip HTML of tags
-        var content =
+        content =
           title +
           " " +
-          request.content
+          content
             .replace(/\r?\n|\r/g, " ")
             .replace(/<style(.|\n)+?\/style>/gi, "")
             .replace(/<noscript(.|\n)+?\/noscript>/gi, "")
@@ -215,26 +260,37 @@
 
 <div class="container mx-auto p-4 max-w-sm">
   <div class="mb-4">
-    <input
-      bind:value={searchText}
-      type="text"
-      id="inSearch"
-      bind:this={inSearch}
-      on:keyup={onSearchType}
-      class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      placeholder={tabMessage}
-    />
+    <div class="relative">
+      <Search class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
+      <Input
+        value={searchText}
+        on:input={onSearchType}
+        class="pl-10"
+        placeholder={tabMessage}
+      />
+    </div>
   </div>
 
-  <button 
-    on:click={searchGoogle} 
-    class="w-full mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 flex items-center justify-center"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-    </svg>
-    Search
-  </button>
+  <div class="flex space-x-2 mb-4">
+    <Select
+        selected={selectedSearchEngine}
+        onSelectedChange={handleSelectChange}
+      >
+        
+         <SelectTrigger class="w-full">
+        <SelectValue placeholder="Select search engine" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="DDG Go To First">DuckDuckGo 1st</SelectItem>
+        <SelectItem value="Perplexity AI">Perplexity AI</SelectItem>
+        <SelectItem value="Google">Google</SelectItem>
+        <SelectItem value="DuckDuckGo">DuckDuckGo</SelectItem>
+      </SelectContent>
+    </Select>
+    <Button on:click={searchSelected} class="flex-shrink-0">
+      <Search class="mr-2 h-4 w-4" /> {selectedSearchEngine}
+    </Button>
+  </div>
 
   <nav class="space-y-2" id="tabDisplay" bind:this={tabDisplay}>
     {#each results as result}
@@ -242,7 +298,6 @@
     {:else}
       <div 
         id="tabMessage" 
-        bind:this={tabMessageDiv}
         class="p-2 text-sm italic text-gray-600"
       >
         {tabMessage}

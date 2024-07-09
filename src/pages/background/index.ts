@@ -4,7 +4,29 @@
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
   .catch((error) => console.error(error));
-/*
+
+
+
+
+// Listen for tab updates
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === 'complete') {
+    console.log('Tab updated:', tabId, tab.url);
+  }
+});
+
+// Listen for tab switches
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  chrome.tabs.get(activeInfo.tabId, (tab) => {
+    console.log('Switched to tab:', tab.id, tab.url);
+  });
+});
+
+// // Listen for navigation events
+// chrome.webNavigation.onCompleted.addListener((details) => {
+//   console.log('Navigation completed:', details.tabId, details.url);
+// });
+
 
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
   console.log(tab.url)
@@ -46,4 +68,4 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
     return true; // prevents the callback from being called too early on return
 });
 
-*/
+// */

@@ -1,4 +1,4 @@
-import Main from '../../tabsearch/Main.svelte';
+import Main from '../../tabsearch/TabSearch.svelte';
 
 import "tailwindcss/tailwind.css";
 import "./app.pcss";
