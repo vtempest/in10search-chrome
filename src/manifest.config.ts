@@ -12,9 +12,9 @@ export default defineManifest(async (env) => ({
     "name": "Tab Manager AI",
     version: `${major}.${minor}.${patch}`,
     version_name: version,
-    "description": "Tab Manager AI  - Browser Sidebar - Search Text Content of All Open Tabs",
+    "description": "in10search Tab Manager AI  - Browser Sidebar - Search Text Content of All Open Tabs",
     "permissions": [
-        "sidePanel", "scripting", "storage", "contextMenus", "tabs"
+        "sidePanel", "scripting", "contextMenus", "tabs",     "activeTab"
     ],
     "host_permissions": [
         "*://*/*"
@@ -45,7 +45,7 @@ export default defineManifest(async (env) => ({
     },  
     "content_scripts": [ {
         "matches": ["<all_urls>"],
-        "js": ["src/pages/content/index.ts"]
+        "js": ["src/pages/content/index.js"]
     }]
 
 }));

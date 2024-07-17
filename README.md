@@ -1,10 +1,19 @@
-## in10search Tab Manager AI 
 
 <p align="center">
 <a href="https://chromewebstore.google.com/detail/in10search/manhemnhmipdhdpabojcplebckhckeko?authuser=2&hl=en">
 <img src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/tbyBjqi7Zu733AAKA5n4.png" />
 </a>
+
+
+    <a href="https://discord.gg/kfwE5Ydu">
+        <img src="https://img.shields.io/discord/1130153053056684123.svg?label=Discord&logo=Discord&colorB=7289da&style=flat" alt="Join Discord"/>
+    </a>
+
 </p>
+
+
+
+## in10search Tab Manager AI 
 
 * Horizontal Tabs in Browser Sidepanel 
 
@@ -14,21 +23,21 @@
 
 * Resolve query against LLM search or Google
 
+* Select Text, Press Tab To Search Google, Tab again for First Result
+
+
 ### Screenshot 
 
-<img src="https://i.imgur.com/gG1nJQE.png">
+<img src="https://i.imgur.com/JC1qiRd.png">
 
 
 ## Ideas for Future Development
 
-* font speed https://media.nngroup.com/media/editor/2022/04/14/16-fonts-reading-speed.png
-*paste from clipboard and searh
-
 * Ask ChatGPT about Text Content of All Open Tabs
 
-* WordNet definintion and synonyms
-
 * Reader Mode to Extract main content text and cite 
+
+* Paste from clipboard and searh
 
 * Tree tab view and history view 
 
