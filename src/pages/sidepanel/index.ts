@@ -1,6 +1,6 @@
-import Main from '../../tabsearch/TabSearch.svelte';
+import Main from '$lib/components/TabManager/TabManager.svelte';
 
-import "tailwindcss/tailwind.css";
+// import "tailwindcss/tailwind.css";
 import "./app.pcss";
 
 function restoreMain() {

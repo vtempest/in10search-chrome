@@ -1,2 +1,12 @@
+import Main from '$lib/components/TabManager/TabManager.svelte';
 
-console.log(1)
+// import "tailwindcss/tailwind.css";
+import "./app.pcss";
+
+function restoreMain() {
+  const app = new Main({
+    target: document.body,
+  });
+}
+
+document.addEventListener('DOMContentLoaded', restoreMain);

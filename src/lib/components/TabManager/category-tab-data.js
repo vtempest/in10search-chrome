@@ -1,4 +1,4 @@
-const tab_categories = [
+export const tab_categories = [
     {
         "name": "Video Entertainment",
         "domains": ["youtube.com", "netflix.com", "hulu.com", "twitch.tv"],
@@ -85,11 +85,6 @@ const tab_categories = [
         "keywords": ["car", "vehicle", "review", "maintenance", "dealer", "model"]
     },
     {
-        "name": "Weather & Climate",
-        "domains": ["weather.com", "accuweather.com", "windy.com", "climate.gov"],
-        "keywords": ["forecast", "temperature", "precipitation", "humidity", "storm", "climate"]
-    },
-    {
         "name": "Arts & Culture",
         "domains": ["deviantart.com", "metmuseum.org", "goodreads.com", "imdb.com"],
         "keywords": ["art", "exhibition", "book", "film", "culture", "review"]
@@ -124,11 +119,11 @@ const tab_categories = [
         "name": "Photography",
         "domains": ["500px.com", "flickr.com", "dpreview.com", "smugmug.com"],
         "keywords": ["camera", "photo", "lens", "editing", "portfolio", "technique"]
-    },
+    },  
     {
-        "name": "Environment & Sustainability",
+        "name": "Nature",
         "domains": ["epa.gov", "greenpeace.org", "nationalgeographic.com", "treehugger.com"],
-        "keywords": ["eco", "sustainable", "conservation", "renewable", "climate", "recycle"]
+        "keywords": ["conservation", "renewable", "climate", "recycle"]
     },
     {
         "name": "Cryptocurrency & Blockchain",
