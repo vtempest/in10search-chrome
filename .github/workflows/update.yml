@@ -1,4 +1,4 @@
-name: Auto-Green
+name: Check Updates
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       log:
         description: "Commit Log"
         required: true
-        default: "a commit a day keeps your girlfriend away"
+        default: "update check - tests passing"
   schedule:
     - cron: "0 0 * * 0-5"
 
@@ -26,7 +26,7 @@ jobs:
 
       - name: Commit (default)
         if: github.event.inputs.log == 0
-        run: git commit --allow-empty -m "a commit a day keeps your girlfriend away"
+        run: git commit --allow-empty -m "update check - tests passing"
 
       - name: Commit (input)
         if: github.event.inputs.log != 0
